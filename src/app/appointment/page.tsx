@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BottomNav } from '@/components/bottom-nav';
 import { saveAppointmentRecord, type AppointmentRecord } from '@/lib/storage';
-import { ArrowLeft, MapPin, Clock, CreditCard, MessageSquare, CheckCircle, Phone, Copy } from 'lucide-react';
+import { ArrowLeft, MapPin, MessageSquare, CheckCircle, Phone, Copy, Heart } from 'lucide-react';
 
 const consultationTypes = [
-  { id: 'individual', label: '个体咨询', desc: '一对一深度咨询' },
-  { id: 'couple', label: '伴侣咨询', desc: '双人关系咨询' },
+  { id: 'individual', label: '个体咨询', desc: '一对一公益心理支持' },
+  { id: 'couple', label: '伴侣咨询', desc: '双人关系公益支持' },
   { id: 'family', label: '家庭咨询', desc: '家庭成员共同参与' },
   { id: 'child', label: '儿童咨询', desc: '儿童心理评估与辅导' },
   { id: 'teen', label: '青少年咨询', desc: '青少年心理支持' },
@@ -50,7 +50,6 @@ export default function AppointmentPage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }).catch(() => {
-      // Fallback
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
@@ -61,7 +60,7 @@ export default function AppointmentPage() {
       <div className="min-h-screen pb-20 bg-background">
         <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border">
           <div className="max-w-lg mx-auto px-5 py-4">
-            <h1 className="text-lg font-bold text-foreground">预约提交成功</h1>
+            <h1 className="text-lg font-bold text-foreground">提交成功</h1>
           </div>
         </header>
 
@@ -70,8 +69,8 @@ export default function AppointmentPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
               <CheckCircle className="w-8 h-8 text-primary" />
             </div>
-            <h2 className="text-xl font-bold text-foreground mb-2">预约已提交</h2>
-            <p className="text-sm text-muted-foreground">请添加咨询师微信确认预约详情</p>
+            <h2 className="text-xl font-bold text-foreground mb-2">公益咨询申请已提交</h2>
+            <p className="text-sm text-muted-foreground">请添加咨询师微信确认咨询详情</p>
           </div>
 
           {/* WeChat Contact */}
@@ -91,29 +90,19 @@ export default function AppointmentPage() {
                 <p className="text-xs text-primary mb-3">已复制到剪贴板</p>
               )}
               <p className="text-xs text-muted-foreground">
-                添加时请备注「简快树洞预约」
+                添加时请备注「简快树洞公益咨询」
               </p>
             </div>
           </div>
 
           {/* Info Cards */}
           <div className="space-y-3 animate-slide-up">
-            <div className="bg-secondary/30 rounded-xl p-4">
+            <div className="bg-primary/5 rounded-xl p-4">
               <div className="flex items-start gap-3">
-                <CreditCard className="w-4 h-4 text-primary mt-0.5" />
+                <Heart className="w-4 h-4 text-primary mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-foreground">收费标准</p>
-                  <p className="text-xs text-muted-foreground mt-1">个体咨询：300元 / 50分钟</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-secondary/30 rounded-xl p-4">
-              <div className="flex items-start gap-3">
-                <Clock className="w-4 h-4 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">改期规则</p>
-                  <p className="text-xs text-muted-foreground mt-1">提前24小时可免费改期或取消</p>
+                  <p className="text-sm font-medium text-foreground">免费公益</p>
+                  <p className="text-xs text-muted-foreground mt-1">本服务为免费公益心理支持，不收取任何费用</p>
                 </div>
               </div>
             </div>
@@ -130,16 +119,13 @@ export default function AppointmentPage() {
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="bg-secondary/30 rounded-xl p-4">
-              <div className="flex items-start gap-3">
-                <CreditCard className="w-4 h-4 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">支付方式</p>
-                  <p className="text-xs text-muted-foreground mt-1">支持微信支付 / 支付宝</p>
-                </div>
-              </div>
-            </div>
+          {/* Risk Boundary Notice */}
+          <div className="mt-4 bg-secondary/30 rounded-xl p-4">
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              <strong className="text-foreground">温馨提示：</strong>免费公益咨询不能替代专业心理咨询与危机干预。如有严重心理困扰或处于危机状态，请拨打全国心理援助热线 <strong className="text-crisis">12356</strong> 或急救电话 <strong className="text-crisis">120</strong>。
+            </p>
           </div>
 
           <button
@@ -165,8 +151,8 @@ export default function AppointmentPage() {
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-lg font-bold text-foreground">预约咨询</h1>
-              <p className="text-xs text-muted-foreground">专业咨询师为你服务</p>
+              <h1 className="text-lg font-bold text-foreground">免费公益咨询</h1>
+              <p className="text-xs text-muted-foreground">本平台提供免费公益心理支持</p>
             </div>
           </div>
         </div>
@@ -176,11 +162,11 @@ export default function AppointmentPage() {
         {/* Info Banner */}
         <div className="bg-primary/5 rounded-2xl p-4 mb-6">
           <div className="flex items-start gap-3">
-            <MessageSquare className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+            <Heart className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-foreground mb-1">预约流程</p>
+              <p className="text-sm font-medium text-foreground mb-1">免费公益心理支持</p>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                填写预约信息 → 添加咨询师微信确认 → 按时咨询
+                本平台提供免费公益心理咨询服务，不收取任何费用。填写信息后添加咨询师微信即可安排咨询。
               </p>
             </div>
           </div>
@@ -268,19 +254,11 @@ export default function AppointmentPage() {
           </div>
         </div>
 
-        {/* Pricing Info */}
+        {/* Consultation Info */}
         <div className="mt-6 bg-secondary/30 rounded-xl p-4 space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">个体咨询</span>
-            <span className="text-foreground font-medium">300元 / 50分钟</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">支付方式</span>
-            <span className="text-foreground">微信 / 支付宝</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">改期规则</span>
-            <span className="text-foreground">提前24小时免费</span>
+            <span className="text-muted-foreground">服务性质</span>
+            <span className="text-primary font-medium">免费公益</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">咨询方式</span>
@@ -300,12 +278,19 @@ export default function AppointmentPage() {
           </div>
         </div>
 
+        {/* Risk Boundary Notice */}
+        <div className="mt-4 bg-secondary/30 rounded-xl p-4">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            <strong className="text-foreground">风险提示：</strong>免费公益咨询不能替代专业心理咨询与危机干预。如有严重心理困扰，请及时寻求专业医疗机构帮助。危机热线：<strong className="text-crisis">12356</strong> / 急救：<strong className="text-crisis">120</strong>。
+          </p>
+        </div>
+
         {/* Submit */}
         <button
           onClick={handleSubmit}
           className="w-full mt-6 py-3.5 bg-primary text-primary-foreground rounded-xl font-medium hover:opacity-90 transition-opacity"
         >
-          提交预约
+          提交公益咨询申请
         </button>
 
         {/* Contact */}

@@ -22,8 +22,8 @@ const features = [
   {
     href: '/appointment',
     icon: Calendar,
-    title: '预约咨询',
-    desc: '预约专业咨询师，线上/线下均可',
+    title: '免费公益咨询',
+    desc: '免费公益心理支持，线上/线下均可',
     color: 'bg-lavender/10 text-lavender-foreground',
   },
 ];
@@ -118,9 +118,13 @@ export default function HomePage() {
         </div>
 
         {/* Disclaimer */}
-        <p className="mt-6 mb-4 text-center text-[11px] text-muted-foreground/70 leading-relaxed px-4">
+        <p className="mt-6 mb-2 text-center text-[11px] text-muted-foreground/70 leading-relaxed px-4">
           本平台所有内容定位为心理陪伴与自助支持，非医学诊断，不承诺疗效。<br />
+          免费公益咨询不能替代专业心理咨询与危机干预。<br />
           如有严重心理困扰，请及时寻求专业医疗机构帮助。
+        </p>
+        <p className="mb-4 text-center text-[10px] text-muted-foreground/50 leading-relaxed px-4">
+          本网页为免费开源项目，代码开源共享，仅用于心理陪伴与自助支持。
         </p>
       </main>
 

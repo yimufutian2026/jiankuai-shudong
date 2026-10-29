@@ -61,7 +61,7 @@ export default function RecordsPage() {
   const tabs = [
     { id: 'chat' as const, label: '对话记录', icon: MessageCircle },
     { id: 'assessment' as const, label: '测评记录', icon: ClipboardCheck },
-    { id: 'appointment' as const, label: '预约记录', icon: Calendar },
+    { id: 'appointment' as const, label: '咨询记录', icon: Calendar },
   ];
 
   const formatDate = (ts: number) => {
@@ -192,7 +192,7 @@ export default function RecordsPage() {
         {activeTab === 'appointment' && (
           <div className="space-y-3">
             {appointmentRecords.length === 0 ? (
-              <EmptyState text="暂无预约记录" />
+              <EmptyState text="暂无咨询记录" />
             ) : (
               appointmentRecords.map((record) => (
                 <div key={record.id} className="bg-card rounded-xl border border-border p-4">
@@ -226,7 +226,7 @@ export default function RecordsPage() {
               </div>
             </div>
             <p className="text-sm text-muted-foreground mb-6">
-              将清除所有对话记录、测评记录和预约记录。数据仅保存在本地，清除后无法恢复。
+              将清除所有对话记录、测评记录和咨询记录。数据仅保存在本地，清除后无法恢复。
             </p>
             <div className="flex gap-3">
               <button

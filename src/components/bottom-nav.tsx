@@ -8,7 +8,7 @@ const navItems = [
   { href: '/', label: '首页', icon: Home },
   { href: '/chat', label: '专家对话', icon: MessageCircle },
   { href: '/assessments', label: '心理自测', icon: ClipboardCheck },
-  { href: '/appointment', label: '预约咨询', icon: Calendar },
+  { href: '/appointment', label: '公益咨询', icon: Calendar },
   { href: '/records', label: '我的记录', icon: FolderOpen },
 ];
 

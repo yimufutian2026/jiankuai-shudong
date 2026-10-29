@@ -49,8 +49,8 @@ const stressAssessment: Assessment = {
   results: [
     { level: '状态良好', scoreRange: [0, 5], description: '你当前的情绪和压力状态良好，继续保持积极的生活方式。', suggestion: '保持规律作息、适度运动和社交活动，这些都是维持心理健康的好习惯。', recommendedExpert: 'general' },
     { level: '轻度压力', scoreRange: [6, 11], description: '你可能正承受一些压力，这在日常生活中是正常的。', suggestion: '建议尝试一些放松技巧，如深呼吸、冥想或散步。适当调整生活节奏，给自己一些休息时间。', recommendedExpert: 'general' },
-    { level: '中度压力', scoreRange: [12, 17], description: '你的压力水平较高，可能已经开始影响到日常生活。', suggestion: '建议寻求专业心理咨询师的帮助，学习更有效的压力管理方法。可以考虑预约一次咨询。', recommendedExpert: 'general' },
-    { level: '高度压力', scoreRange: [18, 24], description: '你正承受很大的压力，建议尽快寻求专业帮助。', suggestion: '强烈建议预约专业心理咨询师进行面对面评估。如果感到难以承受，请拨打心理援助热线12356。', recommendedExpert: 'general' },
+    { level: '中度压力', scoreRange: [12, 17], description: '你的压力水平较高，可能已经开始影响到日常生活。', suggestion: '建议寻求专业心理咨询师的帮助，学习更有效的压力管理方法。可以考虑申请一次免费公益咨询。', recommendedExpert: 'general' },
+    { level: '高度压力', scoreRange: [18, 24], description: '你正承受很大的压力，建议尽快寻求专业帮助。', suggestion: '强烈建议申请免费公益心理咨询进行面对面评估。如果感到难以承受，请拨打心理援助热线12356。', recommendedExpert: 'general' },
   ],
 };
 
@@ -75,8 +75,8 @@ const depressionAssessment: Assessment = {
   results: [
     { level: '情绪正常', scoreRange: [0, 4], description: '你目前没有明显的抑郁情绪，请继续保持良好的心态。', suggestion: '保持健康的生活方式，规律作息和运动有助于维持良好的情绪状态。', recommendedExpert: 'general' },
     { level: '轻度抑郁情绪', scoreRange: [5, 9], description: '你可能有一些轻度的抑郁情绪，这在压力大的时候是常见的。', suggestion: '建议关注自己的情绪变化，尝试增加运动、社交和放松活动。如果持续两周以上，建议咨询专业人士。', recommendedExpert: 'general' },
-    { level: '中度抑郁情绪', scoreRange: [10, 14], description: '你的抑郁情绪可能已经达到中等程度，建议寻求专业帮助。', suggestion: '建议预约心理咨询师进行详细评估。简快身心积极疗法可以帮助你找到内在资源，逐步改善状态。', recommendedExpert: 'general' },
-    { level: '中重度抑郁情绪', scoreRange: [15, 19], description: '你正在经历较严重的抑郁情绪，强烈建议寻求专业帮助。', suggestion: '请尽快预约专业心理咨询师或前往医院心理科就诊。如果感到难以承受，请拨打12356心理援助热线。', recommendedExpert: 'general' },
+    { level: '中度抑郁情绪', scoreRange: [10, 14], description: '你的抑郁情绪可能已经达到中等程度，建议寻求专业帮助。', suggestion: '建议申请免费公益心理咨询进行详细评估。简快身心积极疗法可以帮助你找到内在资源，逐步改善状态。', recommendedExpert: 'general' },
+    { level: '中重度抑郁情绪', scoreRange: [15, 19], description: '你正在经历较严重的抑郁情绪，强烈建议寻求专业帮助。', suggestion: '请尽快申请免费公益心理咨询或前往医院心理科就诊。如果感到难以承受，请拨打12356心理援助热线。', recommendedExpert: 'general' },
     { level: '重度抑郁情绪', scoreRange: [20, 27], description: '你的抑郁情绪较为严重，请务必尽快寻求专业医疗帮助。', suggestion: '强烈建议尽快前往医院心理科或精神科就诊。如需紧急帮助，请拨打12356或120。你不需要独自承受。', recommendedExpert: 'general' },
   ],
   crisisScore: 1,
@@ -102,8 +102,8 @@ const childAssessment: Assessment = {
   results: [
     { level: '状态良好', scoreRange: [0, 5], description: '孩子的心理状态整体良好，请继续给予关爱和支持。', suggestion: '保持亲子互动时间，多陪伴孩子游戏和交流，关注孩子的情绪变化。', recommendedExpert: 'child' },
     { level: '轻度关注', scoreRange: [6, 11], description: '孩子可能有一些情绪波动，建议多关注和陪伴。', suggestion: '增加亲子互动时间，用游戏和绘画等方式了解孩子的内心世界。如果持续2周以上没有改善，建议咨询专业人士。', recommendedExpert: 'child' },
-    { level: '中度关注', scoreRange: [12, 17], description: '孩子的心理状态需要关注，建议寻求专业评估。', suggestion: '建议预约儿童心理专家进行咨询。早期的专业支持可以帮助孩子更好地度过困难时期。', recommendedExpert: 'child' },
-    { level: '需要专业帮助', scoreRange: [18, 24], description: '孩子可能需要专业的心理支持，建议尽快咨询。', suggestion: '强烈建议尽快预约儿童心理专家进行面对面评估。也可以拨打12356获取专业指导。', recommendedExpert: 'child' },
+    { level: '中度关注', scoreRange: [12, 17], description: '孩子的心理状态需要关注，建议寻求专业评估。', suggestion: '建议申请免费公益儿童心理咨询。早期的专业支持可以帮助孩子更好地度过困难时期。', recommendedExpert: 'child' },
+    { level: '需要专业帮助', scoreRange: [18, 24], description: '孩子可能需要专业的心理支持，建议尽快咨询。', suggestion: '强烈建议尽快申请免费公益儿童心理咨询进行面对面评估。也可以拨打12356获取专业指导。', recommendedExpert: 'child' },
   ],
 };
 
@@ -128,8 +128,8 @@ const teenAssessment: Assessment = {
   results: [
     { level: '状态良好', scoreRange: [0, 6], description: '你的心理状态整体不错，继续保持积极的生活态度。', suggestion: '保持运动、社交和兴趣爱好，遇到困难时及时和家人朋友倾诉。', recommendedExpert: 'teen' },
     { level: '轻度困扰', scoreRange: [7, 12], description: '你可能正面临一些青春期的困扰，这是成长中的正常现象。', suggestion: '尝试和信任的人聊聊你的感受，保持运动和良好的作息。如果困扰持续，可以考虑咨询。', recommendedExpert: 'teen' },
-    { level: '中度困扰', scoreRange: [13, 18], description: '你可能正经历比较大的心理困扰，建议寻求专业支持。', suggestion: '建议预约青少年心理咨询专家聊一聊。专业的帮助可以让你更快地找到方向。', recommendedExpert: 'teen' },
-    { level: '需要专业帮助', scoreRange: [19, 27], description: '你正在经历较严重的心理困扰，请尽快寻求专业帮助。', suggestion: '强烈建议尽快预约心理咨询师或告诉信任的大人。如需紧急帮助，请拨打12356。你值得被帮助。', recommendedExpert: 'teen' },
+    { level: '中度困扰', scoreRange: [13, 18], description: '你可能正经历比较大的心理困扰，建议寻求专业支持。', suggestion: '建议申请免费公益青少年心理咨询。专业的帮助可以让你更快地找到方向。', recommendedExpert: 'teen' },
+    { level: '需要专业帮助', scoreRange: [19, 27], description: '你正在经历较严重的心理困扰，请尽快寻求专业帮助。', suggestion: '强烈建议尽快申请免费公益心理咨询或告诉信任的大人。如需紧急帮助，请拨打12356。你值得被帮助。', recommendedExpert: 'teen' },
   ],
   crisisScore: 2,
 };
@@ -154,8 +154,8 @@ const marriageAssessment: Assessment = {
   results: [
     { level: '关系健康', scoreRange: [0, 6], description: '你们的关系状态良好，有良好的沟通和情感基础。', suggestion: '继续保持开放的沟通和共同的活动。偶尔的关系维护可以帮助感情更加稳固。', recommendedExpert: 'marriage' },
     { level: '需要关注', scoreRange: [7, 12], description: '你们的关系有一些需要关注的地方，但改善空间很大。', suggestion: '建议尝试增加有效沟通的时间，学习表达需求和倾听对方。可以考虑阅读婚恋关系方面的书籍或参加工作坊。', recommendedExpert: 'marriage' },
-    { level: '关系紧张', scoreRange: [13, 18], description: '你们的关系正面临较大挑战，建议寻求专业帮助。', suggestion: '建议预约婚恋关系专家进行咨询。专业的第三方视角可以帮助你们看到彼此的需求，找到改善的方向。', recommendedExpert: 'marriage' },
-    { level: '关系危机', scoreRange: [19, 24], description: '你们的关系处于危机状态，强烈建议寻求专业帮助。', suggestion: '建议尽快预约婚恋专家进行系统评估和辅导。如果涉及到安全问题，请优先保护自己。', recommendedExpert: 'marriage' },
+    { level: '关系紧张', scoreRange: [13, 18], description: '你们的关系正面临较大挑战，建议寻求专业帮助。', suggestion: '建议申请免费公益婚恋咨询。专业的第三方视角可以帮助你们看到彼此的需求，找到改善的方向。', recommendedExpert: 'marriage' },
+    { level: '关系危机', scoreRange: [19, 24], description: '你们的关系处于危机状态，强烈建议寻求专业帮助。', suggestion: '建议尽快申请免费公益婚恋咨询进行系统评估和辅导。如果涉及到安全问题，请优先保护自己。', recommendedExpert: 'marriage' },
   ],
 };
 
@@ -179,8 +179,8 @@ const familyAssessment: Assessment = {
   results: [
     { level: '权威型教养', scoreRange: [0, 5], description: '你的教养方式偏向权威型（民主型），这是最有利于孩子发展的方式。', suggestion: '继续保持温暖而有规则的教养方式。你给孩子既提供了安全感，又给了他们成长的空间。', recommendedExpert: 'family' },
     { level: '基本良好', scoreRange: [6, 11], description: '你的教养方式整体不错，有一些方面可以进一步优化。', suggestion: '注意在规则与自由之间找到平衡，多倾听孩子的想法，用鼓励代替批评。', recommendedExpert: 'family' },
-    { level: '需要调整', scoreRange: [12, 17], description: '你的教养方式可能需要一些调整，某些模式可能影响孩子的心理发展。', suggestion: '建议学习正面管教或非暴力沟通方法。也可以预约家庭教育专家进行一对一指导。', recommendedExpert: 'family' },
-    { level: '建议专业指导', scoreRange: [18, 24], description: '当前的教养方式可能对孩子的心理健康产生不利影响，建议寻求专业帮助。', suggestion: '强烈建议预约家庭教育专家进行咨询。改变教养方式不需要一步到位，从小的改变开始就好。', recommendedExpert: 'family' },
+    { level: '需要调整', scoreRange: [12, 17], description: '你的教养方式可能需要一些调整，某些模式可能影响孩子的心理发展。', suggestion: '建议学习正面管教或非暴力沟通方法。也可以申请免费公益家庭教育指导。', recommendedExpert: 'family' },
+    { level: '建议专业指导', scoreRange: [18, 24], description: '当前的教养方式可能对孩子的心理健康产生不利影响，建议寻求专业帮助。', suggestion: '强烈建议申请免费公益家庭教育咨询。改变教养方式不需要一步到位，从小的改变开始就好。', recommendedExpert: 'family' },
   ],
 };
 
