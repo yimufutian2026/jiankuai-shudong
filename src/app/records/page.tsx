@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { BottomNav } from '@/components/bottom-nav';
 import {
   getChatRecords,
@@ -14,12 +13,12 @@ import {
   type AssessmentRecord,
   type AppointmentRecord,
 } from '@/lib/storage';
-import { ArrowLeft, MessageCircle, ClipboardCheck, Calendar, Trash2, Download, AlertTriangle } from 'lucide-react';
+import { PageHeader } from '@/components/page-header';
+import { MessageCircle, ClipboardCheck, Calendar, Trash2, Download, AlertTriangle } from 'lucide-react';
 
 type TabType = 'chat' | 'assessment' | 'appointment';
 
 export default function RecordsPage() {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>('chat');
   const [chatRecords, setChatRecords] = useState<ChatRecord[]>([]);
   const [assessmentRecords, setAssessmentRecords] = useState<AssessmentRecord[]>([]);
@@ -76,34 +75,29 @@ export default function RecordsPage() {
   return (
     <div className="min-h-screen pb-20 bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border">
-        <div className="max-w-lg mx-auto px-5 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button onClick={() => router.back()} className="p-1 -ml-1 text-muted-foreground hover:text-foreground">
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <h1 className="text-lg font-bold text-foreground">我的记录</h1>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleExport}
-                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-                title="导出记录"
-              >
-                <Download className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setShowClearConfirm(true)}
-                className="p-2 rounded-lg text-muted-foreground hover:text-crisis hover:bg-crisis/10 transition-colors"
-                title="清除所有记录"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
+      <PageHeader
+        title="我的记录"
+        subtitle="所有数据只保存在这台设备上，随时可以一键清除"
+        backTo="/"
+        right={
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handleExport}
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              title="导出记录"
+            >
+              <Download className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setShowClearConfirm(true)}
+              className="p-2 rounded-lg text-muted-foreground hover:text-crisis hover:bg-crisis/10 transition-colors"
+              title="清除所有记录"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       <main className="max-w-lg mx-auto px-5 py-4">
         {/* Tabs */}
@@ -134,7 +128,7 @@ export default function RecordsPage() {
               <EmptyState text="暂无对话记录" />
             ) : (
               chatRecords.map((record) => (
-                <div key={record.id} className="bg-card rounded-xl border border-border p-4">
+                <div key={record.id} className="card-soft p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <h3 className="text-sm font-medium text-foreground">{record.expertName}</h3>
@@ -166,7 +160,7 @@ export default function RecordsPage() {
               <EmptyState text="暂无测评记录" />
             ) : (
               assessmentRecords.map((record) => (
-                <div key={record.id} className="bg-card rounded-xl border border-border p-4">
+                <div key={record.id} className="card-soft p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <h3 className="text-sm font-medium text-foreground">{record.title}</h3>
@@ -195,7 +189,7 @@ export default function RecordsPage() {
               <EmptyState text="暂无咨询记录" />
             ) : (
               appointmentRecords.map((record) => (
-                <div key={record.id} className="bg-card rounded-xl border border-border p-4">
+                <div key={record.id} className="card-soft p-4">
                   <div className="mb-2">
                     <h3 className="text-sm font-medium text-foreground">{record.consultationType}</h3>
                     <p className="text-xs text-muted-foreground">{formatDate(record.createdAt)}</p>

@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BottomNav } from '@/components/bottom-nav';
 import { saveAppointmentRecord, type AppointmentRecord } from '@/lib/storage';
-import { ArrowLeft, MapPin, MessageSquare, CheckCircle, Phone, Copy, Heart } from 'lucide-react';
+import { PageHeader } from '@/components/page-header';
+import { MapPin, MessageSquare, CheckCircle, Phone, Copy, Heart } from 'lucide-react';
 
 const consultationTypes = [
   { id: 'individual', label: '个体咨询', desc: '一对一公益心理支持' },
@@ -58,11 +59,11 @@ export default function AppointmentPage() {
   if (step === 'success') {
     return (
       <div className="min-h-screen pb-20 bg-background">
-        <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border">
-          <div className="max-w-lg mx-auto px-5 py-4">
-            <h1 className="text-lg font-bold text-foreground">提交成功</h1>
-          </div>
-        </header>
+        <PageHeader
+          title="提交成功"
+          subtitle="这一步，已经很勇敢"
+          backTo="/"
+        />
 
         <main className="max-w-lg mx-auto px-5 py-8">
           <div className="text-center mb-8 animate-slide-up">
@@ -144,19 +145,11 @@ export default function AppointmentPage() {
   return (
     <div className="min-h-screen pb-20 bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border">
-        <div className="max-w-lg mx-auto px-5 py-4">
-          <div className="flex items-center gap-3">
-            <button onClick={() => router.back()} className="p-1 -ml-1 text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-lg font-bold text-foreground">免费公益咨询</h1>
-              <p className="text-xs text-muted-foreground">本平台提供免费公益心理支持</p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        title="免费公益咨询"
+        subtitle="不收费、不评判，可以慢慢来"
+        backTo="/"
+      />
 
       <main className="max-w-lg mx-auto px-5 py-4">
         {/* Info Banner */}

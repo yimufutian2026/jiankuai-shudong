@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { BottomNav } from '@/components/bottom-nav';
+import { PrivacyBadge } from '@/components/privacy-badge';
 import {
   MessageCircle,
   ClipboardCheck,
@@ -11,7 +12,6 @@ import {
   ShieldCheck,
   Zap,
   Phone,
-  CheckCircle2,
   Lock,
   ArrowRight,
 } from 'lucide-react';
@@ -62,7 +62,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen pb-20">
       {/* 顶部导航：品牌 + slogan + 本地存储状态标签 */}
-      <nav className="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-border/50">
+      <nav className="header-blur">
         <div className="max-w-3xl mx-auto px-5 h-14 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0">
             <span className="text-xl">🌿</span>
@@ -73,10 +73,7 @@ export default function HomePage() {
               </span>
             </div>
           </div>
-          <div className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span className="text-[11px] font-medium">本地存储 · 不上传</span>
-          </div>
+          <PrivacyBadge />
         </div>
       </nav>
 
@@ -98,17 +95,11 @@ export default function HomePage() {
               结构化建议——所有对话只保存在你自己的设备上。
             </p>
             <div className="flex flex-wrap gap-3 mb-3">
-              <Link
-                href="/chat"
-                className="inline-flex items-center gap-2 bg-primary text-primary-foreground rounded-xl px-6 py-3 font-medium hover:opacity-90 hover:-translate-y-0.5 hover:shadow-md transition-all"
-              >
+              <Link href="/chat" className="btn-primary">
                 <MessageCircle className="w-4 h-4" />
                 开始咨询
               </Link>
-              <Link
-                href="/assessments"
-                className="inline-flex items-center gap-2 bg-card border border-border text-foreground rounded-xl px-6 py-3 font-medium hover:border-primary/40 hover:-translate-y-0.5 hover:shadow-sm transition-all"
-              >
+              <Link href="/assessments" className="btn-outline">
                 <ClipboardCheck className="w-4 h-4" />
                 免费心理测评
               </Link>
@@ -139,7 +130,7 @@ export default function HomePage() {
             return (
               <div
                 key={a.title}
-                className="bg-card rounded-2xl p-5 border border-border hover:border-primary/30 transition-all hover:shadow-sm"
+                className="card-interactive p-5"
               >
                 <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3 ${a.color}`}>
                   <Icon className="w-5.5 h-5.5" />
@@ -159,7 +150,7 @@ export default function HomePage() {
               <Link
                 key={f.href}
                 href={f.href}
-                className="group flex items-center gap-4 bg-card rounded-2xl p-4 border border-border hover:border-primary/30 transition-all hover:shadow-sm"
+                className="group flex items-center gap-4 card-interactive p-4"
               >
                 <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                   <Icon className="w-5 h-5 text-primary" />

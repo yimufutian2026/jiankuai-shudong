@@ -5,7 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { getAssessmentById } from '@/lib/assessments';
 import { saveAssessmentRecord, type AssessmentRecord } from '@/lib/storage';
 import { ASSESSMENT_CRISIS_RESPONSE } from '@/lib/crisis';
-import { ArrowLeft, ArrowRight, RotateCcw, Phone, AlertTriangle, CheckCircle } from 'lucide-react';
+import { PageHeader } from '@/components/page-header';
+import { ArrowLeft, ArrowRight, RotateCcw, AlertTriangle, CheckCircle } from 'lucide-react';
 
 export default function AssessmentDetailPage() {
   const params = useParams();
@@ -92,11 +93,11 @@ export default function AssessmentDetailPage() {
   if (showResult && result) {
     return (
       <div className="min-h-screen bg-background">
-        <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border">
-          <div className="max-w-lg mx-auto px-5 py-4">
-            <h1 className="text-lg font-bold text-foreground">{assessment.title} - 结果</h1>
-          </div>
-        </header>
+        <PageHeader
+          title={`${assessment.title} · 结果`}
+          subtitle="结果只保存在你自己的设备上"
+          backTo="/assessments"
+        />
 
         <main className="max-w-lg mx-auto px-5 py-6">
           {/* Crisis Alert */}
@@ -115,7 +116,7 @@ export default function AssessmentDetailPage() {
           )}
 
           {/* Score Card */}
-          <div className="bg-card rounded-2xl border border-border p-6 text-center mb-4 animate-slide-up">
+          <div className="card-soft p-6 text-center mb-4 animate-slide-up">
             <div className="text-4xl mb-3">{assessment.icon}</div>
             <h2 className="text-xl font-bold text-foreground mb-2">{result.level}</h2>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary mb-4">
@@ -174,26 +175,20 @@ export default function AssessmentDetailPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border">
-        <div className="max-w-lg mx-auto px-5 py-4">
-          <div className="flex items-center gap-3">
-            <button onClick={() => router.push('/assessments')} className="p-1 -ml-1 text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="flex-1">
-              <h1 className="text-sm font-semibold text-foreground">{assessment.title}</h1>
-              <p className="text-xs text-muted-foreground">第 {currentIndex + 1} / {totalQuestions} 题</p>
-            </div>
-          </div>
-          {/* Progress bar */}
-          <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+      <PageHeader
+        title={assessment.title}
+        subtitle={`第 ${currentIndex + 1} / ${totalQuestions} 题 · 凭直觉选就好`}
+        backTo="/assessments"
+        hideBadge
+      >
+        {/* Progress bar */}
+        <div className="mt-3 h-1.5 bg-secondary rounded-full overflow-hidden">
+          <div
+            className="h-full bg-primary rounded-full transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
         </div>
-      </header>
+      </PageHeader>
 
       {/* Question */}
       <main className="max-w-lg mx-auto px-5 py-8">

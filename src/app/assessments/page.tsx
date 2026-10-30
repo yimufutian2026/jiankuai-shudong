@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BottomNav } from '@/components/bottom-nav';
+import { PageHeader } from '@/components/page-header';
 import { assessments } from '@/lib/assessments';
-import { ArrowLeft, ChevronRight, AlertTriangle } from 'lucide-react';
+import { ChevronRight, AlertTriangle } from 'lucide-react';
 
 export default function AssessmentsPage() {
   const router = useRouter();
@@ -25,20 +26,11 @@ export default function AssessmentsPage() {
 
   return (
     <div className="min-h-screen pb-20 bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border">
-        <div className="max-w-lg mx-auto px-5 py-4">
-          <div className="flex items-center gap-3">
-            <button onClick={() => router.back()} className="p-1 -ml-1 text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-lg font-bold text-foreground">心理自测中心</h1>
-              <p className="text-xs text-muted-foreground">了解自己的心理状态</p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        title="心理自测中心"
+        subtitle="安静地看看自己，结果只留在你的设备上"
+        backTo="/"
+      />
 
       <main className="max-w-lg mx-auto px-5 py-4">
         {/* Category Filter */}
@@ -47,7 +39,7 @@ export default function AssessmentsPage() {
             <button
               key={c.id}
               onClick={() => setActiveCategory(c.id)}
-              className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-colors ${
+              className={`chip ${
                 activeCategory === c.id
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
@@ -64,7 +56,7 @@ export default function AssessmentsPage() {
             <button
               key={a.id}
               onClick={() => router.push(`/assessments/${a.id}`)}
-              className="w-full text-left bg-card rounded-2xl p-5 border border-border hover:border-primary/30 transition-all hover:shadow-sm"
+              className="w-full text-left card-interactive p-5"
             >
               <div className="flex items-center gap-4">
                 <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-2xl">
@@ -86,10 +78,10 @@ export default function AssessmentsPage() {
         </div>
 
         {/* Notice */}
-        <div className="mt-6 bg-secondary/30 rounded-xl p-4">
+        <div className="mt-6 notice-soft">
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-warm-foreground flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p>
               <strong className="text-foreground">说明：</strong>测评结果仅供筛查参考，不构成医学诊断。如有严重困扰，请及时寻求专业帮助。
             </p>
           </div>

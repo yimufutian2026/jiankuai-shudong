@@ -62,7 +62,7 @@ export function DisclaimerProvider({ children }: { children: React.ReactNode }) 
 
             <button
               onClick={handleAgree}
-              className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:opacity-90 transition-opacity"
+              className="btn-primary w-full"
             >
               我已了解，开始使用
             </button>

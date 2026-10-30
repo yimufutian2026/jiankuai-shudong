@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BottomNav } from '@/components/bottom-nav';
+import { PageHeader } from '@/components/page-header';
 import { experts } from '@/lib/experts';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export default function ChatPage() {
   const router = useRouter();
@@ -25,20 +26,11 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen pb-20 bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border">
-        <div className="max-w-lg mx-auto px-5 py-4">
-          <div className="flex items-center gap-3">
-            <button onClick={() => router.back()} className="p-1 -ml-1 text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-lg font-bold text-foreground">专家对话</h1>
-              <p className="text-xs text-muted-foreground">选择一位专家，开始倾诉</p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        title="专家对话"
+        subtitle="这里只有你知道，可以放心说"
+        backTo="/"
+      />
 
       <main className="max-w-lg mx-auto px-5 py-4">
         {/* Domain Filter */}
@@ -47,7 +39,7 @@ export default function ChatPage() {
             <button
               key={d.id}
               onClick={() => setSelectedDomain(d.id)}
-              className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-colors ${
+              className={`chip ${
                 selectedDomain === d.id
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
@@ -64,7 +56,7 @@ export default function ChatPage() {
             <button
               key={expert.id}
               onClick={() => router.push(`/chat/${expert.id}`)}
-              className="w-full text-left bg-card rounded-2xl p-5 border border-border hover:border-primary/30 transition-all hover:shadow-sm"
+              className="w-full text-left card-interactive p-5"
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl">
@@ -91,8 +83,8 @@ export default function ChatPage() {
         </div>
 
         {/* Notice */}
-        <div className="mt-6 bg-secondary/30 rounded-xl p-4">
-          <p className="text-xs text-muted-foreground leading-relaxed">
+        <div className="mt-6 notice-soft">
+          <p>
             <strong className="text-foreground">温馨提示：</strong>对话基于简快身心积极疗法风格，遵循「共情-聚焦-探索-目标-行动」流程。所有回复仅供参考，不做医学诊断。
           </p>
         </div>

@@ -7,6 +7,7 @@ import { generateResponse } from '@/lib/chat-engine';
 import { detectCrisis } from '@/lib/crisis';
 import { getChatRecords, saveChatRecord, type ChatMessage, type ChatRecord } from '@/lib/storage';
 import { ArrowLeft, Send, Phone, AlertTriangle } from 'lucide-react';
+import { PrivacyBadge } from '@/components/privacy-badge';
 
 export default function ChatRoomPage() {
   const params = useParams();
@@ -117,18 +118,19 @@ export default function ChatRoomPage() {
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="flex-shrink-0 bg-card/95 backdrop-blur-md border-b border-border">
+      <header className="flex-shrink-0 bg-background/90 backdrop-blur-md border-b border-border/50">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
-          <button onClick={() => router.push('/chat')} className="p-1 -ml-1 text-muted-foreground hover:text-foreground">
+          <button onClick={() => router.push('/chat')} className="p-1 -ml-1 text-muted-foreground hover:text-foreground transition-colors" aria-label="返回">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-xl">
             {expert.avatar}
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <h1 className="font-semibold text-foreground text-sm">{expert.name}</h1>
-            <p className="text-xs text-muted-foreground">{expert.domainLabel}</p>
+            <p className="text-xs text-muted-foreground">{expert.domainLabel} · 只保存在你的设备上</p>
           </div>
+          <PrivacyBadge compact />
         </div>
       </header>
 
@@ -187,7 +189,7 @@ export default function ChatRoomPage() {
       </div>
 
       {/* Input */}
-      <div className="flex-shrink-0 bg-card/95 backdrop-blur-md border-t border-border">
+      <div className="flex-shrink-0 bg-background/90 backdrop-blur-md border-t border-border/50">
         <div className="max-w-lg mx-auto px-4 py-3">
           <div className="flex items-end gap-2">
             <div className="flex-1 relative">

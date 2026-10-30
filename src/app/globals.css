@@ -97,6 +97,53 @@
   }
 }
 
+/* ===== 简快树洞全局组件样式（全站统一的疗愈风 token 复用层） ===== */
+
+/* 柔和卡片：圆角 + 细边框 + 奶油底 */
+@utility card-soft {
+  @apply bg-card rounded-2xl border border-border;
+}
+
+/* 可交互卡片：hover 描边变主色 + 阴影扩散 */
+@utility card-interactive {
+  @apply bg-card rounded-2xl border border-border transition-all hover:border-primary/30 hover:shadow-sm;
+}
+
+/* 常驻隐私安心标识（绿色对勾：本地存储 · 不上传） */
+@utility privacy-badge {
+  @apply inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-[11px] font-medium;
+}
+
+/* 统一页头：毛玻璃 + 极细下边线（与新首页导航一致） */
+@utility header-blur {
+  @apply sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-border/50;
+}
+
+/* 主按钮：鼠尾草绿实心 + hover 轻微上浮 */
+@utility btn-primary {
+  @apply inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-xl px-6 py-3 font-medium transition-all hover:opacity-90 hover:-translate-y-0.5 hover:shadow-md;
+}
+
+/* 次按钮：描边 + hover 描边变主色 */
+@utility btn-outline {
+  @apply inline-flex items-center justify-center gap-2 bg-card border border-border text-foreground rounded-xl px-6 py-3 font-medium transition-all hover:border-primary/40 hover:-translate-y-0.5 hover:shadow-sm;
+}
+
+/* 小号主按钮 */
+@utility btn-primary-sm {
+  @apply inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-xl px-4 py-2.5 text-sm font-medium transition-all hover:opacity-90;
+}
+
+/* 提示便签：柔和底色说明卡 */
+@utility notice-soft {
+  @apply bg-secondary/30 rounded-xl p-4 text-xs text-muted-foreground leading-relaxed;
+}
+
+/* 筛选胶囊 */
+@utility chip {
+  @apply px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-colors;
+}
+
 /* Custom scrollbar */
 .scrollbar-thin::-webkit-scrollbar {
   width: 4px;
