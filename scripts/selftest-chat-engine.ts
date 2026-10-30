@@ -5,11 +5,13 @@
  * 模拟真实聊天页调用方式：messageHistory 含专家开场白 + 全部历史消息 + 当前用户消息。
  * A 危机回归 / B 共情针对性 / C 内容驱动阶段 / D 儿童模板多样性 / E 行动针对性
  * F 开场建约与探意愿 / G 具体化追问 / H 身份-行为分离(含误判) / I 例外→行动转化
+ * J 量表数据完整性(数量/题量/计分/分级覆盖/危机标记/合规措辞)
  */
 
 import { generateResponse } from '../src/lib/chat-engine';
 import { experts } from '../src/lib/experts';
 import { CRISIS_RESPONSE } from '../src/lib/crisis';
+import { assessments } from '../src/lib/assessments';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -195,6 +197,72 @@ const i4 = generateResponse({ expert: teen, messageHistory: buildHistory(['压�
 check('I4 teen域例外→转化', /起点|多出现|放大|配方/.test(i4), i4);
 const i5 = generateResponse({ expert: marriage, messageHistory: buildHistory(['我们经常吵架', '唉', '不过也有好的时候']), userMessage: '不过也有好的时候' });
 check('I5 marriage域例外→转化', /起点|多出现|放大|配方/.test(i5), i5);
+
+// ---------- J 组：量表数据完整性 ----------
+console.log('\n【J组】量表数据完整性');
+check('J1 共12套量表', assessments.length === 12, `实际 ${assessments.length} 套`);
+const newScaleIds = ['anxiety', 'sleep', 'parentcomm', 'academic', 'social', 'resilience'];
+const newScales = newScaleIds.map((id) => assessments.find((a) => a.id === id));
+check('J2 新增6套全部存在', newScales.every((a) => a !== undefined), newScaleIds.join(','));
+check(
+  'J3 每套题量达标',
+  assessments.every((a) => a.questions.length >= 6 && a.questions.length <= 15),
+  assessments.map((a) => `${a.id}:${a.questions.length}`).join(' ')
+);
+check(
+  'J4 新增6套每套12-15题',
+  newScales.every((a) => a !== undefined && a.questions.length >= 12 && a.questions.length <= 15),
+  newScales.map((a) => `${a?.id}:${a?.questions.length}`).join(' ')
+);
+check(
+  'J5 所有题目选项为0-3分计分且带id',
+  assessments.every((a) =>
+    a.questions.every(
+      (q) =>
+        q.id.length > 0 &&
+        q.options.length >= 2 &&
+        q.options.every((o) => o.score >= 0 && o.score <= 3)
+    )
+  ),
+  ''
+);
+check(
+  'J6 每套结果分级连续覆盖满分区间',
+  assessments.every((a) => {
+    const maxScore = a.questions.length * 3;
+    for (let s = 0; s <= maxScore; s++) {
+      if (!a.results.some((r) => s >= r.scoreRange[0] && s <= r.scoreRange[1])) return false;
+    }
+    return true;
+  }),
+  ''
+);
+check(
+  'J7 危机条目均标记isCrisis且推荐专家有效',
+  assessments.every((a) => a.results.every((r) => experts.some((e) => e.id === r.recommendedExpert))) &&
+    ['anxiety', 'academic', 'social', 'resilience'].every((id) => {
+      const a = assessments.find((x) => x.id === id);
+      return a !== undefined && a.questions.some((q) => q.isCrisis === true) && (a.crisisScore ?? 0) >= 1;
+    }),
+  ''
+);
+check(
+  'J8 危机条目文案包含危机指向词',
+  assessments.every((a) =>
+    a.questions.every((q) => !q.isCrisis || /不想活|伤害自己|活不下去|结束|念头/.test(q.text))
+  ),
+  ''
+);
+check(
+  'J9 建议文案不做诊断/不承诺疗效',
+  assessments.every((a) => a.results.every((r) => !/诊断|确诊|治疗疾病|保证治愈|包治/.test(r.description + r.suggestion))),
+  ''
+);
+check(
+  'J10 量表id唯一',
+  new Set(assessments.map((a) => a.id)).size === assessments.length,
+  ''
+);
 
 // ---------- 汇总 ----------
 console.log(`\n========== 自测结果: ${passed} 通过, ${failed} 失败 ==========\n`);

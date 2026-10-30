@@ -1,6 +1,7 @@
 /**
- * 心理自测中心 - 6套测评量表
+ * 心理自测中心 - 12套测评量表
  * 每题选项计分，结果给筛查参考+建议+推荐专家
+ * 题目均为通俗自编题面，不引用任何有版权的标准量表原文
  */
 
 export interface Question {
@@ -184,13 +185,197 @@ const familyAssessment: Assessment = {
   ],
 };
 
+// 7. 焦虑程度自测
+const anxietyAssessment: Assessment = {
+  id: 'anxiety',
+  title: '焦虑程度自测',
+  description: '了解紧绷、担忧和不安占据你生活的程度',
+  icon: '🍂',
+  category: '情绪',
+  questions: [
+    { id: 'a1', text: '最近是否常常感到心里发紧、放松不下来？', options: [{ label: '从未', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'a2', text: '是否总忍不住担心还没发生的事情？', options: [{ label: '从未', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'a3', text: '身体是否有紧绷感，比如肩膀僵硬、手心出汗、心跳偏快？', options: [{ label: '从未', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'a4', text: '是否容易因为小事而紧张过度？', options: [{ label: '从未', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'a5', text: '担忧的念头一旦开始，是否很难停下来？', options: [{ label: '从未', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'a6', text: '是否容易坐立不安、很难安静地待一会儿？', options: [{ label: '从未', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'a7', text: '是否因为担心而回避一些事情或场合？', options: [{ label: '从未', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'a8', text: '夜里是否会越想越清醒、难以入睡？', options: [{ label: '从未', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'a9', text: '是否总觉得「万一出事怎么办」？', options: [{ label: '从未', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'a10', text: '这种紧绷感是否已经影响到吃饭、学习或工作？', options: [{ label: '完全没有', score: 0 }, { label: '有一点', score: 1 }, { label: '比较明显', score: 2 }, { label: '影响很大', score: 3 }] },
+    { id: 'a11', text: '身边人是否说过你最近「太紧张了」？', options: [{ label: '从未', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'a12', text: '紧绷到难受的时候，是否出现过不想继续承受、甚至不想活下去的念头？', options: [{ label: '从未', score: 0 }, { label: '有过一闪而过的念头', score: 1 }, { label: '经常出现', score: 2 }, { label: '有具体打算', score: 3 }], isCrisis: true },
+  ],
+  results: [
+    { level: '状态平稳', scoreRange: [0, 9], description: '你近期的紧绷和担忧处于正常范围，整体状态比较平稳。', suggestion: '保持规律作息和适度运动，给生活留一点空白时间，就是很好的自我照顾。', recommendedExpert: 'general' },
+    { level: '轻度紧绷', scoreRange: [10, 18], description: '你最近可能有些紧绷，这是压力下的常见反应，不必因此责怪自己。', suggestion: '可以试试腹式呼吸、渐进式肌肉放松等小练习；每天留十分钟给「担心时间」，其余时间温柔地把自己拉回当下。', recommendedExpert: 'general' },
+    { level: '中度紧绷', scoreRange: [19, 27], description: '你的紧绷感比较明显，可能已经开始影响日常生活，值得认真对待。', suggestion: '建议找信任的人聊一聊，或申请一次免费公益咨询。在陪伴下梳理担忧，往往比独自扛着轻得多。', recommendedExpert: 'general' },
+    { level: '明显紧绷', scoreRange: [28, 36], description: '你正承受着较重的紧绷与担忧，请不要独自硬撑。', suggestion: '强烈建议申请免费公益心理咨询进行面对面评估。如果感到难以承受，请拨打心理援助热线12356，你一直都不是一个人。', recommendedExpert: 'general' },
+  ],
+  crisisScore: 1,
+};
+
+// 8. 睡眠健康自测
+const sleepAssessment: Assessment = {
+  id: 'sleep',
+  title: '睡眠健康自测',
+  description: '看看你的入睡、易醒、多梦和晨起恢复感',
+  icon: '🌙',
+  category: '状态',
+  questions: [
+    { id: 'z1', text: '躺下后通常多久能睡着？', options: [{ label: '15分钟内', score: 0 }, { label: '半小时左右', score: 1 }, { label: '1小时左右', score: 2 }, { label: '经常超过1小时', score: 3 }] },
+    { id: 'z2', text: '夜里是否容易醒来？', options: [{ label: '很少', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每晚', score: 3 }] },
+    { id: 'z3', text: '夜里醒来后是否很难再次入睡？', options: [{ label: '很少', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每晚', score: 3 }] },
+    { id: 'z4', text: '是否多梦，醒来觉得像没睡一样？', options: [{ label: '很少', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每晚', score: 3 }] },
+    { id: 'z5', text: '早上醒来时感觉恢复精力了吗？', options: [{ label: '基本恢复了', score: 0 }, { label: '恢复一些', score: 1 }, { label: '不太恢复', score: 2 }, { label: '完全没有', score: 3 }] },
+    { id: 'z6', text: '白天是否容易犯困、提不起精神？', options: [{ label: '很少', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'z7', text: '睡前是否忍不住刷手机，越刷越晚？', options: [{ label: '很少', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'z8', text: '是否会在睡前反复回想白天的事或担心明天？', options: [{ label: '很少', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每晚', score: 3 }] },
+    { id: 'z9', text: '是否比计划的时间早醒，且醒后睡不着？', options: [{ label: '很少', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '几乎每天', score: 3 }] },
+    { id: 'z10', text: '睡眠问题是否影响了白天的心情或效率？', options: [{ label: '完全没有', score: 0 }, { label: '有一点', score: 1 }, { label: '比较明显', score: 2 }, { label: '影响很大', score: 3 }] },
+    { id: 'z11', text: '你的作息时间是否规律？', options: [{ label: '很规律', score: 0 }, { label: '大致规律', score: 1 }, { label: '不太规律', score: 2 }, { label: '很乱', score: 3 }] },
+    { id: 'z12', text: '这种睡眠状态持续多久了？', options: [{ label: '没有困扰', score: 0 }, { label: '不到两周', score: 1 }, { label: '两周到一个月', score: 2 }, { label: '超过一个月', score: 3 }] },
+  ],
+  results: [
+    { level: '睡眠良好', scoreRange: [0, 9], description: '你的睡眠状态整体不错，身体和大脑得到了较好的休息。', suggestion: '继续保持规律作息，睡前一小时远离屏幕，让入睡成为一天中温柔的收尾。', recommendedExpert: 'general' },
+    { level: '轻度困扰', scoreRange: [10, 18], description: '你的睡眠有一些小波动，这在忙碌或压力大时很常见。', suggestion: '可以试试固定的睡前仪式：调暗灯光、洗热水澡、深呼吸几轮。白天适度运动、晒晒太阳，也有助于夜里入睡。', recommendedExpert: 'general' },
+    { level: '中度困扰', scoreRange: [19, 27], description: '你的睡眠困扰比较明显，可能已经影响到白天的状态，值得认真照顾。', suggestion: '建议建立稳定的起床时间（比入睡时间更重要），下午后减少咖啡因。如果持续困扰，可以申请一次免费公益咨询，聊聊背后的心事。', recommendedExpert: 'general' },
+    { level: '明显困扰', scoreRange: [28, 36], description: '你的睡眠正承受着较大困扰，请不要独自硬扛。', suggestion: '强烈建议申请免费公益心理咨询，或前往正规医院睡眠/心理门诊了解。长期睡不好值得被认真对待。', recommendedExpert: 'general' },
+  ],
+};
+
+// 9. 亲子沟通质量评估（家长自查）
+const parentCommAssessment: Assessment = {
+  id: 'parentcomm',
+  title: '亲子沟通质量评估',
+  description: '家长自查：倾听、情绪表达、冲突处理与接纳度',
+  icon: '💬',
+  category: '家庭',
+  questions: [
+    { id: 'p1', text: '孩子说话时，我会放下手里的事认真听完', options: [{ label: '总是', score: 0 }, { label: '经常', score: 1 }, { label: '偶尔', score: 2 }, { label: '很少', score: 3 }] },
+    { id: 'p2', text: '我会先听完孩子的想法，再表达自己的意见', options: [{ label: '总是', score: 0 }, { label: '经常', score: 1 }, { label: '偶尔', score: 2 }, { label: '很少', score: 3 }] },
+    { id: 'p3', text: '孩子愿意主动和我说学校里的事', options: [{ label: '总是', score: 0 }, { label: '经常', score: 1 }, { label: '偶尔', score: 2 }, { label: '很少', score: 3 }] },
+    { id: 'p4', text: '孩子哭或发脾气时，我能先接住情绪再讲道理', options: [{ label: '总是', score: 0 }, { label: '经常', score: 1 }, { label: '偶尔', score: 2 }, { label: '很少', score: 3 }] },
+    { id: 'p5', text: '发生冲突后，我们会找时间和好、把话说开', options: [{ label: '总是', score: 0 }, { label: '经常', score: 1 }, { label: '偶尔', score: 2 }, { label: '很少', score: 3 }] },
+    { id: 'p6', text: '我会在气头上说出让孩子受伤的话', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'p7', text: '孩子犯了错，我愿意听他解释原因', options: [{ label: '总是', score: 0 }, { label: '经常', score: 1 }, { label: '偶尔', score: 2 }, { label: '很少', score: 3 }] },
+    { id: 'p8', text: '我能接纳孩子和我期待中不一样的样子', options: [{ label: '完全可以', score: 0 }, { label: '基本可以', score: 1 }, { label: '有些困难', score: 2 }, { label: '很困难', score: 3 }] },
+    { id: 'p9', text: '我会向孩子表达「不管怎样，我都爱你」', options: [{ label: '经常', score: 0 }, { label: '偶尔', score: 1 }, { label: '很少', score: 2 }, { label: '从不', score: 3 }] },
+    { id: 'p10', text: '孩子有秘密愿意告诉我，或不怕被我知道', options: [{ label: '基本是', score: 0 }, { label: '部分是', score: 1 }, { label: '不太是', score: 2 }, { label: '完全不是', score: 3 }] },
+    { id: 'p11', text: '我们聊天时，多数是轻松的还是审问式的？', options: [{ label: '很轻松', score: 0 }, { label: '比较轻松', score: 1 }, { label: '有点紧张', score: 2 }, { label: '像审问', score: 3 }] },
+    { id: 'p12', text: '孩子情绪低落时，会愿意待在我身边', options: [{ label: '基本是', score: 0 }, { label: '有时是', score: 1 }, { label: '不太是', score: 2 }, { label: '完全不是', score: 3 }] },
+  ],
+  results: [
+    { level: '沟通顺畅', scoreRange: [0, 9], description: '你们的亲子沟通整体顺畅，孩子在关系中感到安全，这是很珍贵的。', suggestion: '继续保持倾听和表达爱的习惯。偶尔问一句「今天有什么开心或难过的事吗」，会让联结越来越深。', recommendedExpert: 'family' },
+    { level: '基本良好', scoreRange: [10, 18], description: '你们的沟通底子不错，只是在某些时刻容易卡住，这很正常。', suggestion: '可以练习「先听后说」：孩子表达时先复述他的感受（「你觉得很委屈，对吗」），再谈事情。每天十分钟不评价的陪伴就很有效。', recommendedExpert: 'family' },
+    { level: '需要调整', scoreRange: [19, 27], description: '你们的沟通可能经常出现卡壳或冲突，孩子在慢慢关上心门，值得停下来看看。', suggestion: '先修复关系再谈教育：从每天一件不批评、不指导的小事开始。也可以申请免费公益家庭咨询，一起找到新的相处方式。', recommendedExpert: 'family' },
+    { level: '建议专业支持', scoreRange: [28, 36], description: '你们的亲子沟通正面临较大困难，孩子在关系中可能感到不被理解，建议寻求支持。', suggestion: '强烈建议申请免费公益家庭心理咨询。改变从家长迈出的第一步开始，永远不晚。', recommendedExpert: 'family' },
+  ],
+};
+
+// 10. 青少年学业压力自测
+const academicAssessment: Assessment = {
+  id: 'academic',
+  title: '青少年学业压力自测',
+  description: '看看成绩、比较和期待在你肩上压了多重',
+  icon: '📚',
+  category: '青少年',
+  questions: [
+    { id: 'x1', text: '想到考试或成绩，你会感到紧张不安吗？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'x2', text: '看到同学成绩比你好，心里会很难受吗？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'x3', text: '父母或老师的期待，让你觉得喘不过气吗？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'x4', text: '你是否总担心自己「不够好」「比别人差」？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'x5', text: '作业或复习任务会拖到很晚才开始吗？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'x6', text: '有没有过假装学习、其实在发呆或逃避的时候？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'x7', text: '考试前是否会睡不好、吃不下？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'x8', text: '成绩不理想时，你会很难原谅自己吗？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'x9', text: '是否觉得学习只是为了满足大人的期待？', options: [{ label: '不是', score: 0 }, { label: '有一点', score: 1 }, { label: '比较多', score: 2 }, { label: '完全是', score: 3 }] },
+    { id: 'x10', text: '放假或休息时，你是否也很难真正放松？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'x11', text: '一想到未来（升学、考试），是否感到害怕或麻木？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'x12', text: '压力大的时候，是否出现过不想继续承受、甚至不想活下去的念头？', options: [{ label: '从未', score: 0 }, { label: '有过一闪而过的念头', score: 1 }, { label: '经常出现', score: 2 }, { label: '有具体打算', score: 3 }], isCrisis: true },
+  ],
+  results: [
+    { level: '压力适中', scoreRange: [0, 9], description: '你对学业的感受总体平稳，压力在可以承受的范围。', suggestion: '保持自己的节奏就好。记得给兴趣和休息留位置，它们不是浪费时间，而是给你充电。', recommendedExpert: 'teen' },
+    { level: '轻度压力', scoreRange: [10, 18], description: '你肩上有些压力，这在学生时代很常见，不用因此责怪自己。', suggestion: '试试把大任务拆成小块、一次只做一件；学习间隙深呼吸几次。如果心里闷，找信任的人说说，或者来这里聊聊。', recommendedExpert: 'teen' },
+    { level: '压力偏大', scoreRange: [19, 27], description: '你正扛着比较重的学业压力，已经开始影响状态，值得被认真看见。', suggestion: '建议申请一次免费公益青少年咨询，把成绩背后的担心说出来。分数是一时的，你的状态更重要。', recommendedExpert: 'teen' },
+    { level: '压力明显', scoreRange: [28, 36], description: '你承受的压力已经很重，请一定不要独自硬扛。', suggestion: '强烈建议尽快申请免费公益心理咨询，或告诉信任的大人。如果感到难以承受，请拨打心理援助热线12356，有人愿意听你说。', recommendedExpert: 'teen' },
+  ],
+  crisisScore: 1,
+};
+
+// 11. 社交与自我展现自测
+const socialAssessment: Assessment = {
+  id: 'social',
+  title: '社交与自我展现自测',
+  description: '了解「别人的眼光」在你心里占了多大分量',
+  icon: '🎭',
+  category: '人际',
+  questions: [
+    { id: 'j1', text: '在人多的场合，你会担心自己被评价吗？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'j2', text: '发言或展示前，是否反复担心「出错出丑」？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'j3', text: '是否因为害怕尴尬而回避聚会或活动？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'j4', text: '别人没有及时回复消息，你会想「是不是我说错话了」？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'j5', text: '发过言后，是否会在心里反复回放刚才的表现？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'j6', text: '你是否习惯在心里严厉地批评自己？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'j7', text: '认识新朋友对你来说困难吗？', options: [{ label: '很轻松', score: 0 }, { label: '有点紧张', score: 1 }, { label: '比较困难', score: 2 }, { label: '非常回避', score: 3 }] },
+    { id: 'j8', text: '在人群中，你是否总尽量降低自己的存在感？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'j9', text: '被人注视时（如上台、被点名），身体会不会紧绷、脸红或发抖？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'j10', text: '你是否经常拿自己的短处和别人的长处比？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'j11', text: '这种紧张或回避，是否影响了学习、工作或生活？', options: [{ label: '完全没有', score: 0 }, { label: '有一点', score: 1 }, { label: '比较明显', score: 2 }, { label: '影响很大', score: 3 }] },
+    { id: 'j12', text: '觉得自己「处处不如人」的时候，是否出现过不想活下去的念头？', options: [{ label: '从未', score: 0 }, { label: '有过一闪而过的念头', score: 1 }, { label: '经常出现', score: 2 }, { label: '有具体打算', score: 3 }], isCrisis: true },
+  ],
+  results: [
+    { level: '自在状态', scoreRange: [0, 9], description: '你在人际中总体自在，别人的目光没有过多地束缚你。', suggestion: '继续保持真实的表达。偶尔的小紧张人人都会有，不必苛求自己表现得完美。', recommendedExpert: 'general' },
+    { level: '轻度紧张', scoreRange: [10, 18], description: '你有时会太在意别人的眼光，这很常见，不必因此批评自己。', suggestion: '可以试试「暴露小练习」：从低压力的场合开始，主动说一句话、发一次言，慢慢收集「其实没那么可怕」的体验。', recommendedExpert: 'general' },
+    { level: '中度紧张', scoreRange: [19, 27], description: '「被评价」的担心比较明显地影响着你，独处的时间可能越来越多了。', suggestion: '建议申请一次免费公益咨询。在意他人评价的背后，往往藏着对自己的苛刻，陪伴能帮你慢慢松绑。', recommendedExpert: 'general' },
+    { level: '明显回避', scoreRange: [28, 36], description: '社交上的紧张和自我批判已经明显影响你的生活，请认真对待这份辛苦。', suggestion: '强烈建议申请免费公益心理咨询。如果心里冒出不想承受的念头，请拨打12356——你比自己以为的更重要。', recommendedExpert: 'general' },
+  ],
+  crisisScore: 1,
+};
+
+// 12. 心理韧性自测
+const resilienceAssessment: Assessment = {
+  id: 'resilience',
+  title: '心理韧性自测',
+  description: '看看你面对挫折时的恢复力和自我鼓励能力',
+  icon: '🌾',
+  category: '状态',
+  questions: [
+    { id: 'r1', text: '遇到挫折后，你能慢慢调整过来吗？', options: [{ label: '总是能', score: 0 }, { label: '多数能', score: 1 }, { label: '比较难', score: 2 }, { label: '很难', score: 3 }] },
+    { id: 'r2', text: '情绪低落时，你有让自己平静下来的办法吗？', options: [{ label: '有好几个', score: 0 }, { label: '有一两个', score: 1 }, { label: '几乎没有', score: 2 }, { label: '完全没有', score: 3 }] },
+    { id: 'r3', text: '不顺心的时候，你会对自己说鼓励的话吗？', options: [{ label: '经常会', score: 0 }, { label: '偶尔会', score: 1 }, { label: '很少', score: 2 }, { label: '从不', score: 3 }] },
+    { id: 'r4', text: '你相信自己能想办法渡过难关吗？', options: [{ label: '很相信', score: 0 }, { label: '比较相信', score: 1 }, { label: '不太相信', score: 2 }, { label: '完全不信', score: 3 }] },
+    { id: 'r5', text: '失败后，你容易陷入「我就是不行」的想法吗？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'r6', text: '你觉得自己身上有优点和长处吗？', options: [{ label: '有很多', score: 0 }, { label: '有一些', score: 1 }, { label: '很少', score: 2 }, { label: '想不出来', score: 3 }] },
+    { id: 'r7', text: '遇到难题时，你会主动找人商量或求助吗？', options: [{ label: '经常会', score: 0 }, { label: '偶尔会', score: 1 }, { label: '很少', score: 2 }, { label: '从不', score: 3 }] },
+    { id: 'r8', text: '过去的困难经历，你回头看时会觉得「我熬过来了」吗？', options: [{ label: '常常会', score: 0 }, { label: '偶尔会', score: 1 }, { label: '很少', score: 2 }, { label: '从不', score: 3 }] },
+    { id: 'r9', text: '生活里有让你感到温暖或期待的小事吗？', options: [{ label: '有很多', score: 0 }, { label: '有一些', score: 1 }, { label: '很少', score: 2 }, { label: '几乎没有', score: 3 }] },
+    { id: 'r10', text: '压力大时，你能照顾好自己的吃饭和睡觉吗？', options: [{ label: '基本能', score: 0 }, { label: '多数能', score: 1 }, { label: '比较难', score: 2 }, { label: '很难', score: 3 }] },
+    { id: 'r11', text: '你会把一次失败看成「全部完了」吗？', options: [{ label: '从不', score: 0 }, { label: '偶尔', score: 1 }, { label: '经常', score: 2 }, { label: '总是', score: 3 }] },
+    { id: 'r12', text: '难到撑不住的时候，是否出现过不想继续承受、甚至不想活下去的念头？', options: [{ label: '从未', score: 0 }, { label: '有过一闪而过的念头', score: 1 }, { label: '经常出现', score: 2 }, { label: '有具体打算', score: 3 }], isCrisis: true },
+  ],
+  results: [
+    { level: '韧性充足', scoreRange: [0, 9], description: '你有不错的心理韧性和自我照顾能力，这是你身上的宝贵资源。', suggestion: '继续保持自我鼓励的习惯。也可以把这份力量分享出去——你的稳定本身就是一种照亮。', recommendedExpert: 'general' },
+    { level: '韧性尚可', scoreRange: [10, 18], description: '你有一定的恢复力，只是在压力大的时候容易被耗尽。', suggestion: '建议有意识地储备「能量小事」：列出几件能让你放松的事，在状态好时也坚持做，而不是等到撑不住才想起。', recommendedExpert: 'general' },
+    { level: '韧性偏弱', scoreRange: [19, 27], description: '你最近的恢复力偏弱，挫折带来的消耗可能比想象中更大，值得被温柔对待。', suggestion: '建议练习「自我鼓励三句话」：承认辛苦、看见努力、允许慢慢来。也可以申请免费公益咨询，陪你把资源一点点找回来。', recommendedExpert: 'general' },
+    { level: '需要支持', scoreRange: [28, 36], description: '你当前的心理韧性几乎耗尽，请一定不要独自硬撑。', suggestion: '强烈建议申请免费公益心理咨询。如果心里冒出不想承受的念头，请拨打心理援助热线12356——你撑了这么久，已经很不容易了。', recommendedExpert: 'general' },
+  ],
+  crisisScore: 1,
+};
+
 export const assessments: Assessment[] = [
   stressAssessment,
   depressionAssessment,
+  anxietyAssessment,
   childAssessment,
   teenAssessment,
+  academicAssessment,
   marriageAssessment,
   familyAssessment,
+  parentCommAssessment,
+  sleepAssessment,
+  socialAssessment,
+  resilienceAssessment,
 ];
 
 export function getAssessmentById(id: string): Assessment | undefined {

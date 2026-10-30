@@ -14,6 +14,8 @@ export default function AssessmentsPage() {
   const categories = [
     { id: 'all', label: '全部' },
     { id: '情绪', label: '情绪' },
+    { id: '状态', label: '状态' },
+    { id: '人际', label: '人际' },
     { id: '儿童', label: '儿童' },
     { id: '青少年', label: '青少年' },
     { id: '婚恋', label: '婚恋' },
