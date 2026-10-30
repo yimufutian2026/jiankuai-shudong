@@ -56,6 +56,7 @@ export function DisclaimerProvider({ children }: { children: React.ReactNode }) 
                 <p>4. <strong>不承诺疗效</strong>：对话和建议仅供参考，每个人的情况不同，效果因人而异。免费公益咨询不能替代专业心理咨询与危机干预。</p>
                 <p>5. <strong>开源声明</strong>：本网页为免费开源项目，代码开源共享，仅用于心理陪伴与自助支持，不包含任何商业收费内容。</p>
               </div>
+              <p className="text-xs text-center">在这里说的话，只有你自己知道——可以放心说。</p>
               <p className="text-xs text-center">继续使用即表示你已阅读并同意以上声明</p>
             </div>
 
