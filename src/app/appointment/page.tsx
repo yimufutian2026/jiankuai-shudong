@@ -113,7 +113,7 @@ export default function AppointmentPage() {
                 <div>
                   <p className="text-sm font-medium text-foreground">咨询方式</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    线下：广西宜州区第三人民医院<br />
+                    线下：广西宜州区九龙路末号<br />
                     线上：视频咨询（微信沟通确认）
                   </p>
                 </div>
@@ -272,7 +272,7 @@ export default function AppointmentPage() {
             <MapPin className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-foreground">线下地址</p>
-              <p className="text-xs text-muted-foreground mt-1">广西宜州区第三人民医院</p>
+              <p className="text-xs text-muted-foreground mt-1">广西宜州区九龙路末号</p>
               <p className="text-xs text-muted-foreground">也支持线上视频咨询</p>
             </div>
           </div>
