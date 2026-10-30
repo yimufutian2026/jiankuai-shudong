@@ -20,6 +20,7 @@ export default function AssessmentsPage() {
     { id: '青少年', label: '青少年' },
     { id: '婚恋', label: '婚恋' },
     { id: '家庭', label: '家庭' },
+    { id: '探索', label: '探索' },
   ];
 
   const filtered = activeCategory === 'all'

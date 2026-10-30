@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getAssessmentById } from '@/lib/assessments';
+import { getAssessmentById, getPersonalityOutcome } from '@/lib/assessments';
 import { saveAssessmentRecord, type AssessmentRecord } from '@/lib/storage';
 import { ASSESSMENT_CRISIS_RESPONSE } from '@/lib/crisis';
 import { PageHeader } from '@/components/page-header';
@@ -28,11 +28,16 @@ export default function AssessmentDetailPage() {
   }, [answers]);
 
   const result = useMemo(() => {
-    if (!assessment || !showResult) return null;
+    if (!assessment || !showResult || assessment.type === 'personality') return null;
     return assessment.results.find(
       (r) => totalScore >= r.scoreRange[0] && totalScore <= r.scoreRange[1]
     ) ?? assessment.results[assessment.results.length - 1];
   }, [assessment, totalScore, showResult]);
+
+  const personalityOutcome = useMemo(() => {
+    if (!assessment || !showResult || assessment.type !== 'personality') return null;
+    return getPersonalityOutcome(assessment, answers);
+  }, [assessment, answers, showResult]);
 
   if (!assessment) {
     return (
@@ -59,14 +64,17 @@ export default function AssessmentDetailPage() {
         // Show result
         setShowResult(true);
         // Save record
+        const finalAnswers = { ...answers, [questionId]: score };
+        const isPersonality = assessment.type === 'personality';
+        const outcome = isPersonality ? getPersonalityOutcome(assessment, finalAnswers) : null;
         const record: AssessmentRecord = {
           id: `assess_${Date.now()}`,
           type: assessment.id,
           title: assessment.title,
-          answers: { ...answers, [questionId]: score },
-          totalScore: Object.values(answers).reduce((s, v) => s + v, 0) + score,
-          result: '',
-          suggestion: '',
+          answers: finalAnswers,
+          totalScore: Object.values(finalAnswers).reduce((s, v) => s + v, 0),
+          result: outcome ? `${outcome.type} · ${outcome.profile.title}` : '',
+          suggestion: outcome ? outcome.profile.suggestion : '',
           recommendedExpert: '',
           crisisTriggered: question?.isCrisis === true && score >= (assessment.crisisScore ?? 2),
           createdAt: Date.now(),
@@ -88,6 +96,85 @@ export default function AssessmentDetailPage() {
     setShowResult(false);
     setCrisisTriggered(false);
   };
+
+  // Personality result view
+  if (showResult && assessment.type === 'personality' && personalityOutcome) {
+    return (
+      <div className="min-h-screen bg-background">
+        <PageHeader
+          title={`${assessment.title} · 结果`}
+          subtitle="结果只保存在你自己的设备上"
+          backTo="/assessments"
+        />
+
+        <main className="max-w-lg mx-auto px-5 py-6">
+          {/* Type Card */}
+          <div className="card-soft p-6 text-center mb-4 animate-slide-up">
+            <div className="text-4xl mb-3">{assessment.icon}</div>
+            <div className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-primary/10 mb-3">
+              {personalityOutcome.type.split('').map((letter, i) => (
+                <span key={i} className="text-2xl font-bold text-primary tracking-wider">{letter}</span>
+              ))}
+            </div>
+            <h2 className="text-xl font-bold text-foreground mb-2">{personalityOutcome.profile.title}</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">{personalityOutcome.profile.description}</p>
+          </div>
+
+          {/* Dimension Lines */}
+          <div className="bg-secondary/30 rounded-2xl p-5 mb-4 animate-slide-up">
+            <h3 className="font-semibold text-foreground mb-3">你的四个维度倾向</h3>
+            <div className="space-y-2.5">
+              {personalityOutcome.dimensionLines.map((line) => (
+                <div key={line.label} className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">{line.label}</span>
+                  <span className="text-foreground font-medium">
+                    {line.poleName}
+                    <span className="text-xs text-muted-foreground ml-1.5">{line.count}/{line.total}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Suggestion */}
+          <div className="bg-secondary/30 rounded-2xl p-5 mb-4 animate-slide-up">
+            <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-primary" />
+              给自己的小提醒
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">{personalityOutcome.profile.suggestion}</p>
+          </div>
+
+          {/* Disclaimer */}
+          <div className="notice-soft mb-6">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-warm-foreground flex-shrink-0 mt-0.5" />
+              <p>
+                性格没有好坏之分，每种倾向都有独特的闪光点。本测试仅供自我探索参考，<strong className="text-foreground">不是医学诊断，也不是职业测评</strong>，不能替代专业心理服务。
+              </p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3">
+            <button
+              onClick={handleRestart}
+              className="flex-1 py-2.5 border border-border rounded-xl text-sm text-muted-foreground hover:bg-secondary transition-colors flex items-center justify-center gap-2"
+            >
+              <RotateCcw className="w-4 h-4" />
+              重新测评
+            </button>
+            <button
+              onClick={() => router.push('/assessments')}
+              className="flex-1 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              返回自测中心
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   // Result view
   if (showResult && result) {

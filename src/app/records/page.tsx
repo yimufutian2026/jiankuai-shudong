@@ -170,7 +170,11 @@ export default function RecordsPage() {
                       {record.crisisTriggered && (
                         <span className="text-xs px-2 py-0.5 rounded-full bg-crisis/10 text-crisis">需关注</span>
                       )}
-                      <span className="text-sm font-bold text-primary">{record.totalScore} 分</span>
+                      {record.type === 'personality' ? (
+                        <span className="text-sm font-bold text-primary">{record.result.split(' · ')[0] || '倾向'}</span>
+                      ) : (
+                        <span className="text-sm font-bold text-primary">{record.totalScore} 分</span>
+                      )}
                     </div>
                   </div>
                   {record.result && (

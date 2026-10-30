@@ -1,14 +1,17 @@
 /**
- * 心理自测中心 - 12套测评量表
- * 每题选项计分，结果给筛查参考+建议+推荐专家
+ * 心理自测中心 - 12套筛查量表 + 1套人格风格自测
+ * 计分量表：每题选项计分，结果给筛查参考+建议+推荐专家
+ * 人格测试：4维度倾向计分（无好坏之分），组合4字母类型，自我探索向、非诊断
  * 题目均为通俗自编题面，不引用任何有版权的标准量表原文
  */
 
 export interface Question {
   id: string;
   text: string;
-  options: { label: string; score: number }[];
+  options: { label: string; score: number; pole?: string }[];
   isCrisis?: boolean; // 危机条目标记
+  /** 人格测试：所属维度 key，如 'EI' */
+  dimension?: string;
 }
 
 export interface AssessmentResult {
@@ -17,6 +20,23 @@ export interface AssessmentResult {
   description: string;
   suggestion: string;
   recommendedExpert: string;
+}
+
+/** 人格测试维度定义（如 EI：外向E/内向I） */
+export interface PersonalityDimension {
+  key: string;
+  label: string;
+  leftPole: string;
+  leftName: string;
+  rightPole: string;
+  rightName: string;
+}
+
+/** 人格类型画像（温和描述，非诊断非职业测评） */
+export interface PersonalityProfile {
+  title: string;
+  description: string;
+  suggestion: string;
 }
 
 export interface Assessment {
@@ -28,6 +48,10 @@ export interface Assessment {
   questions: Question[];
   results: AssessmentResult[];
   crisisScore?: number; // 触发危机的分数阈值
+  /** 量表类型：默认 scale（计分筛查），personality 为人格倾向探索 */
+  type?: 'scale' | 'personality';
+  dimensions?: PersonalityDimension[];
+  typeProfiles?: Record<string, PersonalityProfile>;
 }
 
 // 1. 情绪与压力速测
@@ -363,6 +387,68 @@ const resilienceAssessment: Assessment = {
   crisisScore: 1,
 };
 
+// 13. 人格风格自测（自我探索向，4维度倾向组合，非诊断非职业测评）
+// 计分方式：每题两个选项，score 1=左极 / 2=右极（pole 字段标记倾向），无对错无好坏
+const personalityAssessment: Assessment = {
+  id: 'personality',
+  title: '人格风格自测',
+  description: '4个维度、20道日常小题，了解你的性格倾向组合，仅供自我探索',
+  icon: '🧭',
+  category: '探索',
+  type: 'personality',
+  dimensions: [
+    { key: 'EI', label: '能量来源', leftPole: 'E', leftName: '外向', rightPole: 'I', rightName: '内向' },
+    { key: 'NS', label: '信息获取', leftPole: 'N', leftName: '直觉', rightPole: 'S', rightName: '实感' },
+    { key: 'TF', label: '决策方式', leftPole: 'T', leftName: '思考', rightPole: 'F', rightName: '情感' },
+    { key: 'JP', label: '生活方式', leftPole: 'J', leftName: '计划', rightPole: 'P', rightName: '弹性' },
+  ],
+  questions: [
+    // ---- EI 能量来源 ----
+    { id: 'p1', dimension: 'EI', text: '忙碌了一周，周末你更想怎么充电？', options: [{ label: '约朋友出去热闹一下', score: 1, pole: 'E' }, { label: '一个人安静待着休息', score: 2, pole: 'I' }] },
+    { id: 'p2', dimension: 'EI', text: '在陌生的聚会上，你通常：', options: [{ label: '主动找人聊天，很快热络起来', score: 1, pole: 'E' }, { label: '先在一旁观察，熟悉了再开口', score: 2, pole: 'I' }] },
+    { id: 'p3', dimension: 'EI', text: '遇到开心的事，你的第一反应是：', options: [{ label: '马上分享给别人', score: 1, pole: 'E' }, { label: '自己先慢慢体会一会儿', score: 2, pole: 'I' }] },
+    { id: 'p4', dimension: 'EI', text: '讨论问题时，你更习惯：', options: [{ label: '边聊边理清思路', score: 1, pole: 'E' }, { label: '先自己想清楚再说', score: 2, pole: 'I' }] },
+    { id: 'p5', dimension: 'EI', text: '长时间社交之后，你常感觉：', options: [{ label: '意犹未尽，还想继续', score: 1, pole: 'E' }, { label: '有点累，想独处恢复一下', score: 2, pole: 'I' }] },
+    // ---- NS 信息获取 ----
+    { id: 'p6', dimension: 'NS', text: '学一样新东西时，你更喜欢先：', options: [{ label: '了解整体思路和可能性', score: 1, pole: 'N' }, { label: '掌握具体步骤和细节', score: 2, pole: 'S' }] },
+    { id: 'p7', dimension: 'NS', text: '看电影时，你更容易被哪种吸引：', options: [{ label: '有想象力、带隐喻的故事', score: 1, pole: 'N' }, { label: '贴近生活、细节真实的故事', score: 2, pole: 'S' }] },
+    { id: 'p8', dimension: 'NS', text: '别人描述一件事时，你更关注：', options: [{ label: '这件事背后的含义', score: 1, pole: 'N' }, { label: '事情发生的具体经过', score: 2, pole: 'S' }] },
+    { id: 'p9', dimension: 'NS', text: '做计划时，你脑子里更常浮现：', options: [{ label: '未来的各种可能性', score: 1, pole: 'N' }, { label: '眼下实际要做的事', score: 2, pole: 'S' }] },
+    { id: 'p10', dimension: 'NS', text: '听到一个新点子，你通常：', options: [{ label: '容易兴奋，喜欢琢磨新可能', score: 1, pole: 'N' }, { label: '先看看它是否实际可行', score: 2, pole: 'S' }] },
+    // ---- TF 决策方式 ----
+    { id: 'p11', dimension: 'TF', text: '做决定时，你更看重：', options: [{ label: '逻辑是否合理、公平', score: 1, pole: 'T' }, { label: '大家的感受是否被照顾到', score: 2, pole: 'F' }] },
+    { id: 'p12', dimension: 'TF', text: '朋友向你倾诉烦恼，你的第一反应是：', options: [{ label: '帮他分析问题、想办法', score: 1, pole: 'T' }, { label: '先安慰他、理解他的感受', score: 2, pole: 'F' }] },
+    { id: 'p13', dimension: 'TF', text: '评价一部电影，你更常说：', options: [{ label: '剧情逻辑通不通', score: 1, pole: 'T' }, { label: '故事感不感人', score: 2, pole: 'F' }] },
+    { id: 'p14', dimension: 'TF', text: '与人意见不合时，你倾向于：', options: [{ label: '就事论事讲道理', score: 1, pole: 'T' }, { label: '尽量照顾彼此的情绪', score: 2, pole: 'F' }] },
+    { id: 'p15', dimension: 'TF', text: '哪种情况更让你难以忍受：', options: [{ label: '做事完全不讲逻辑', score: 1, pole: 'T' }, { label: '说话伤人而不自知', score: 2, pole: 'F' }] },
+    // ---- JP 生活方式 ----
+    { id: 'p16', dimension: 'JP', text: '出门旅行，你更喜欢：', options: [{ label: '提前做好攻略，按计划走', score: 1, pole: 'J' }, { label: '到了再说，随兴而至', score: 2, pole: 'P' }] },
+    { id: 'p17', dimension: 'JP', text: '面对截止日期，你通常：', options: [{ label: '提前完成才安心', score: 1, pole: 'J' }, { label: '临近截止时效率最高', score: 2, pole: 'P' }] },
+    { id: 'p18', dimension: 'JP', text: '你的书桌或房间一般是：', options: [{ label: '收拾得井井有条', score: 1, pole: 'J' }, { label: '有点乱，但自己找得到东西', score: 2, pole: 'P' }] },
+    { id: 'p19', dimension: 'JP', text: '计划好的安排临时变了，你会：', options: [{ label: '有点烦躁，还是喜欢按原计划', score: 1, pole: 'J' }, { label: '觉得没关系，灵活调整就好', score: 2, pole: 'P' }] },
+    { id: 'p20', dimension: 'JP', text: '周末你更可能：', options: [{ label: '提前想好要做什么', score: 1, pole: 'J' }, { label: '睡到自然醒再说', score: 2, pole: 'P' }] },
+  ],
+  results: [], // 人格测试不走分数分级，结果由 typeProfiles 组合得出
+  typeProfiles: {
+    ISTJ: { title: '可靠的守护者', description: '你踏实稳重、言出必行，做事有条理、重责任。身边的人知道，把事情交给你最放心。', suggestion: '你的稳定是一种珍贵的天赋。偶尔也可以给自己一些弹性空间，允许计划之外的小惊喜发生。' },
+    ISFJ: { title: '温暖的照料者', description: '你细腻体贴，总能察觉别人的需要，安静地付出而不张扬，是让人安心的存在。', suggestion: '照顾别人之余，也别忘了照顾自己。你的感受和别人的一样值得被温柔对待。' },
+    INFJ: { title: '深邃的理想主义者', description: '你内心丰富而有信念，看世界有自己的深度，温和外表下藏着坚定的价值观。', suggestion: '你的洞察力很宝贵。想法很多时，试着把它们写下来或说出来，会让内心更清晰。' },
+    INTJ: { title: '独立的思考者', description: '你喜欢独立思考、追求高效，对事物有自己的判断，不轻易随波逐流。', suggestion: '你的远见常常领先一步。适时分享你的想法，会收获意想不到的支持与共鸣。' },
+    ISTP: { title: '冷静的巧手', description: '你冷静务实、动手能力强，遇到问题喜欢直接上手解决，话不多但很靠得住。', suggestion: '你的行动力是优势。偶尔表达一下内心想法，身边的人会更懂你的好。' },
+    ISFP: { title: '随和的艺术家', description: '你温和随性、感受细腻，喜欢用自己的方式体验生活，对美和和谐有天然的敏感。', suggestion: '你的生活美学值得被看见。偶尔走出舒适圈尝试新事物，会有新的灵感。' },
+    INFP: { title: '真诚的追梦人', description: '你内心柔软而真诚，珍视意义与价值，愿意为自己相信的事默默坚持。', suggestion: '你的真诚很有力量。理想很远时，把它拆成一个个小目标，一步一步靠近就好。' },
+    INTP: { title: '好奇的探索者', description: '你头脑灵活、好奇心强，喜欢琢磨各种有趣的问题，享受思考本身的乐趣。', suggestion: '你的想法常常很有创意。试着把脑海中的构想落地一件，会有满满的成就感。' },
+    ESTP: { title: '活力的行动派', description: '你精力充沛、反应快，喜欢活在当下，遇到问题总能快速找到解决办法。', suggestion: '你的行动力让人羡慕。偶尔停下来复盘一下，会让你的冲劲更有方向。' },
+    ESFP: { title: '快乐的小太阳', description: '你热情开朗、自带感染力，走到哪儿都能带来欢笑，天生懂得享受生活。', suggestion: '你的快乐很有感染力。热闹之余，也给自己留一点安静独处的时间。' },
+    ENFP: { title: '热忱的梦想家', description: '你热情洋溢、点子多多，对世界充满好奇，总能点燃身边人的热情。', suggestion: '你的热情是难得的礼物。想法很多时，挑一个最心动的先坚持做完。' },
+    ENTP: { title: '机敏的点子王', description: '你思维活跃、喜欢挑战，看问题角度新奇，总能提出让人眼前一亮的想法。', suggestion: '你的创意很有价值。把点子变成现实需要一点耐心，不妨找个伙伴一起推进。' },
+    ESTJ: { title: '高效的组织者', description: '你做事果断、讲求效率，天生有组织才能，能把复杂的事情安排得井井有条。', suggestion: '你的执行力让人佩服。推进事情时，也多留意一下身边人的感受节奏。' },
+    ESFJ: { title: '热心的联结者', description: '你热心友善、善解人意，重视和谐的人际关系，是群体里温暖的粘合剂。', suggestion: '你让身边的人如沐春风。付出很多时，记得也给自己留一些被照顾的空间。' },
+    ENFJ: { title: '鼓舞人心的引导者', description: '你善于理解他人、富有感染力，天生懂得鼓励和成就别人，是温暖的引路人。', suggestion: '你的鼓励点亮了很多人。帮助别人成长的同时，也别忘了自己的梦想清单。' },
+    ENTJ: { title: '从容的领航者', description: '你目标清晰、有决断力，面对挑战从容自信，天生具备带领团队向前的气场。', suggestion: '你的魄力与生俱来。冲锋的路上，偶尔慢下来欣赏沿途的风景也很好。' },
+  },
+};
+
 export const assessments: Assessment[] = [
   stressAssessment,
   depressionAssessment,
@@ -376,8 +462,47 @@ export const assessments: Assessment[] = [
   sleepAssessment,
   socialAssessment,
   resilienceAssessment,
+  personalityAssessment,
 ];
 
 export function getAssessmentById(id: string): Assessment | undefined {
   return assessments.find((a) => a.id === id);
+}
+
+/** 人格测试：根据答案计算 4 字母类型（如 INFP）。某维度两侧平手时取左极 */
+export function computePersonalityType(assessment: Assessment, answers: Record<string, number>): string {
+  if (!assessment.dimensions) return '';
+  return assessment.dimensions
+    .map((dim) => {
+      let left = 0;
+      let right = 0;
+      for (const q of assessment.questions.filter((item) => item.dimension === dim.key)) {
+        const score = answers[q.id];
+        const opt = q.options.find((o) => o.score === score);
+        if (opt?.pole === dim.leftPole) left += 1;
+        else if (opt?.pole === dim.rightPole) right += 1;
+      }
+      return left >= right ? dim.leftPole : dim.rightPole;
+    })
+    .join('');
+}
+
+/** 人格测试：获取类型画像结果（含维度明细），未找到返回 null */
+export function getPersonalityOutcome(
+  assessment: Assessment,
+  answers: Record<string, number>
+): { type: string; profile: PersonalityProfile; dimensionLines: { label: string; poleName: string; count: number; total: number }[] } | null {
+  const type = computePersonalityType(assessment, answers);
+  const profile = assessment.typeProfiles?.[type];
+  if (!profile || !assessment.dimensions) return null;
+  const dimensionLines = assessment.dimensions.map((dim, i) => {
+    const pole = type[i];
+    const isLeft = pole === dim.leftPole;
+    const count = assessment.questions.filter(
+      (q) => q.dimension === dim.key && q.options.find((o) => o.score === answers[q.id])?.pole === pole
+    ).length;
+    const total = assessment.questions.filter((q) => q.dimension === dim.key).length;
+    return { label: dim.label, poleName: `${isLeft ? dim.leftName : dim.rightName}（${pole}）`, count, total };
+  });
+  return { type, profile, dimensionLines };
 }

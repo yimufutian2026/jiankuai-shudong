@@ -48,7 +48,7 @@ const features = [
     href: '/assessments',
     icon: ClipboardCheck,
     title: '心理自测',
-    desc: '12 套量表，快速了解自己的状态',
+    desc: '13 套量表，快速了解自己的状态',
   },
   {
     href: '/appointment',

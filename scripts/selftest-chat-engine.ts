@@ -6,12 +6,13 @@
  * A 危机回归 / B 共情针对性 / C 内容驱动阶段 / D 儿童模板多样性 / E 行动针对性
  * F 开场建约与探意愿 / G 具体化追问 / H 身份-行为分离(含误判) / I 例外→行动转化
  * J 量表数据完整性(数量/题量/计分/分级覆盖/危机标记/合规措辞)
+ * K 人格风格自测(维度结构/16型覆盖/类型计算/措辞合规)
  */
 
 import { generateResponse } from '../src/lib/chat-engine';
 import { experts } from '../src/lib/experts';
 import { CRISIS_RESPONSE } from '../src/lib/crisis';
-import { assessments } from '../src/lib/assessments';
+import { assessments, getAssessmentById, computePersonalityType, getPersonalityOutcome } from '../src/lib/assessments';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -200,14 +201,15 @@ check('I5 marriage域例外→转化', /起点|多出现|放大|配方/.test(i5)
 
 // ---------- J 组：量表数据完整性 ----------
 console.log('\n【J组】量表数据完整性');
-check('J1 共12套量表', assessments.length === 12, `实际 ${assessments.length} 套`);
+const scaleAssessments = assessments.filter((a) => a.type !== 'personality');
+check('J1 共13套测评(12套量表+1套人格)', assessments.length === 13 && scaleAssessments.length === 12, `实际 ${assessments.length} 套`);
 const newScaleIds = ['anxiety', 'sleep', 'parentcomm', 'academic', 'social', 'resilience'];
 const newScales = newScaleIds.map((id) => assessments.find((a) => a.id === id));
 check('J2 新增6套全部存在', newScales.every((a) => a !== undefined), newScaleIds.join(','));
 check(
-  'J3 每套题量达标',
-  assessments.every((a) => a.questions.length >= 6 && a.questions.length <= 15),
-  assessments.map((a) => `${a.id}:${a.questions.length}`).join(' ')
+  'J3 每套量表题量达标',
+  scaleAssessments.every((a) => a.questions.length >= 6 && a.questions.length <= 15),
+  scaleAssessments.map((a) => `${a.id}:${a.questions.length}`).join(' ')
 );
 check(
   'J4 新增6套每套12-15题',
@@ -215,8 +217,8 @@ check(
   newScales.map((a) => `${a?.id}:${a?.questions.length}`).join(' ')
 );
 check(
-  'J5 所有题目选项为0-3分计分且带id',
-  assessments.every((a) =>
+  'J5 量表题目选项为0-3分计分且带id',
+  scaleAssessments.every((a) =>
     a.questions.every(
       (q) =>
         q.id.length > 0 &&
@@ -227,8 +229,8 @@ check(
   ''
 );
 check(
-  'J6 每套结果分级连续覆盖满分区间',
-  assessments.every((a) => {
+  'J6 每套量表结果分级连续覆盖满分区间',
+  scaleAssessments.every((a) => {
     const maxScore = a.questions.length * 3;
     for (let s = 0; s <= maxScore; s++) {
       if (!a.results.some((r) => s >= r.scoreRange[0] && s <= r.scoreRange[1])) return false;
@@ -261,6 +263,93 @@ check(
 check(
   'J10 量表id唯一',
   new Set(assessments.map((a) => a.id)).size === assessments.length,
+  ''
+);
+
+// ---------- K 组：人格风格自测 ----------
+console.log('\n【K组】人格风格自测');
+const personality = getAssessmentById('personality');
+check('K1 人格测试存在且类型为personality', personality !== undefined && personality.type === 'personality', '');
+check(
+  'K2 4维度定义完整(EI/NS/TF/JP)',
+  personality?.dimensions?.length === 4 &&
+    ['EI', 'NS', 'TF', 'JP'].every((k) => personality.dimensions?.some((d) => d.key === k)),
+  personality?.dimensions?.map((d) => d.key).join(',') ?? ''
+);
+check(
+  'K3 共20题且每维度5题',
+  personality !== undefined &&
+    personality.questions.length === 20 &&
+    (personality.dimensions ?? []).every(
+      (d) => personality.questions.filter((q) => q.dimension === d.key).length === 5
+    ),
+  personality ? `总${personality.questions.length}题` : ''
+);
+check(
+  'K4 每题2个选项且pole合法(与维度两极一致)',
+  personality !== undefined &&
+    personality.questions.every((q) => {
+      const dim = personality.dimensions?.find((d) => d.key === q.dimension);
+      return (
+        q.options.length === 2 &&
+        q.options.every((o) => o.pole === dim?.leftPole || o.pole === dim?.rightPole) &&
+        new Set(q.options.map((o) => o.pole)).size === 2
+      );
+    }),
+  ''
+);
+check(
+  'K5 16种类型画像全覆盖',
+  personality?.typeProfiles !== undefined &&
+    ['E', 'I'].every((e) =>
+      ['N', 'S'].every((n) =>
+        ['T', 'F'].every((t) =>
+          ['J', 'P'].every((j) => personality.typeProfiles?.[`${e}${n}${t}${j}`] !== undefined)
+        )
+      )
+    ) &&
+    Object.keys(personality.typeProfiles).length === 16,
+  personality?.typeProfiles ? `${Object.keys(personality.typeProfiles).length}种` : ''
+);
+// K6 计算正确性：全左极答案 → ENTP 等待验证。构造全选左极(score=1)与全选右极(score=2)
+if (personality) {
+  const allLeft: Record<string, number> = {};
+  const allRight: Record<string, number> = {};
+  personality.questions.forEach((q) => {
+    allLeft[q.id] = q.options[0].score;
+    allRight[q.id] = q.options[1].score;
+  });
+  check('K6a 全选左极→ENTJ', computePersonalityType(personality, allLeft) === 'ENTJ', computePersonalityType(personality, allLeft));
+  check('K6b 全选右极→ISFP', computePersonalityType(personality, allRight) === 'ISFP', computePersonalityType(personality, allRight));
+  // 混合：EI左(E)、NS右(S)、TF左(T)、JP右(P) → ESTP
+  const mixed: Record<string, number> = {};
+  personality.questions.forEach((q) => {
+    mixed[q.id] = q.dimension === 'EI' || q.dimension === 'TF' ? q.options[0].score : q.options[1].score;
+  });
+  check('K6c 混合答案→ESTP', computePersonalityType(personality, mixed) === 'ESTP', computePersonalityType(personality, mixed));
+  const outcome = getPersonalityOutcome(personality, allLeft);
+  check(
+    'K6d getPersonalityOutcome返回类型/画像/4条维度明细',
+    outcome !== null && outcome.type === 'ENTJ' && outcome.dimensionLines.length === 4 &&
+      outcome.dimensionLines.every((l) => l.count === 5 && l.total === 5),
+    outcome ? `${outcome.type} ${outcome.profile.title}` : 'null'
+  );
+} else {
+  check('K6 类型计算', false, 'personality 未找到');
+}
+check(
+  'K7 画像措辞温和且无诊断/疗效表述',
+  personality !== undefined &&
+    Object.values(personality.typeProfiles ?? {}).every(
+      (p) => !/诊断|确诊|治疗|治愈|疾病|正常吗|有病|障碍/.test(p.title + p.description + p.suggestion)
+    ),
+  ''
+);
+check(
+  'K8 人格测试无危机条目、无分级结果(自我探索向)',
+  personality !== undefined &&
+    personality.questions.every((q) => q.isCrisis !== true) &&
+    personality.results.length === 0,
   ''
 );
 
