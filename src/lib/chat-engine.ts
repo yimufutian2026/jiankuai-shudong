@@ -8,6 +8,13 @@
  * 3. 儿童域（child）提供差异化例外/小目标/行动模板
  * 4. 行动阶段识别具体问题主题，给出针对性方法与贴合的工具箱推荐
  *
+ * 专业手法模块（儿童/青少年咨询师核心手法）：
+ * 模块1 开场建约与探意愿：首轮共情时追加保密边界/来访意愿/目标引导（仅 child/teen 域），
+ *        child 域按“家长代述/孩子本人”区分口吻；“无所谓/不知道聊什么”有温和接住话术
+ * 模块2 具体化追问：focus 阶段按“是否有时间/场景锚点”落到具体时刻，取代泛化提问
+ * 模块3 身份层/行为层分离：命中明确自我否定语时，把“我这个人不行”与“这一次没做好”拆开
+ * 模块4 例外→行动转化：用户给出例外线索后，紧接着把“还行的时刻”放大为下一步起点
+ *
  * 安全边界：危机识别（crisis.ts）为最高优先级，免责声明话术保持原样，纯本地规则引擎。
  */
 
@@ -192,6 +199,90 @@ const EXCEPTION_CLUES: string[] = [
 ];
 
 /**
+ * 模块1·家长口吻线索：child 域用户消息命中 → 按“家长代述”模式回应
+ * （孩子本人来访者通常用“我/妈妈/老师”自称，不会说“孩子”）
+ */
+const PARENT_VOICE_CLUES: string[] = [
+  '我家', '我孩子', '我儿子', '我女儿', '我闺女', '我家娃', '我家宝',
+  '孩子', '宝宝', '宝贝', '娃', '闺女',
+];
+
+/** 模块1·“无所谓/不知道聊什么”线索（强信号，直接接住） */
+const INDECISION_CLUES: string[] = [
+  '无所谓', '随便', '不知道聊什么', '不知道说什么', '没什么想聊',
+  '没啥好说', '都可以', '不知道从何说起', '没什么好聊',
+];
+
+/** 模块1·“被家人带来”的非自愿线索 */
+const UNWILLING_CLUES: string[] = [
+  '被爸妈', '被我妈', '被我爸', '被家人', '我妈让我', '我爸让我',
+  '被迫来', '不想来', '让我来的', '叫我来',
+];
+
+/**
+ * 模块2·时间/场景锚点词：用户消息已含具体线索时，顺着线索追问细节
+ */
+const TIME_SCENE_CLUES: string[] = [
+  '上周', '这周', '昨天', '今天', '前天', '早上', '中午', '晚上', '夜里', '凌晨',
+  '周一', '周二', '周三', '周四', '周五', '周六', '周日', '周末',
+  '那天', '有一次', '每次', '当时', '在学校', '在幼儿园', '在班里', '在家',
+  '路上', '放学', '睡前', '吃饭',
+];
+
+/**
+ * 模块3·自我否定词库（身份层结论）
+ * 强信号：自带“我”的完整否定句，直接触发
+ * 弱信号：需同时出现“我”（自我指向）或整条消息很短（显然在说自己）才触发，避免误伤
+ * 注：刻意不包含“说了没用”这类评价方法/策略的短语
+ */
+const SELF_NEGATION_STRONG: string[] = [
+  '我没用', '我没有用', '我不行', '我就是不行', '我什么都做不好', '我什么都不行',
+  '我很失败', '我就是个垃圾', '我是个垃圾', '我是废物', '我就是个废物',
+  '我很笨', '我不配', '都是我的错', '我太差劲', '我一事无成', '我是个累赘',
+  '我真没用', '我没本事', '我是拖油瓶', '我是多余的', '没人喜欢我',
+];
+
+const SELF_NEGATION_WEAK: string[] = [
+  '努力也没用', '没救了', '比别人差', '一无是处', '一事无成',
+  '废物', '垃圾', '累赘', '差劲',
+];
+
+/**
+ * 模块3·检测明确的自我否定语；返回命中的原词用于回复中引用
+ * 普通情绪表达（如“最近心情不好”）不会命中任何词库，天然不触发
+ */
+function detectSelfDeprecation(text: string): string | null {
+  for (const p of SELF_NEGATION_STRONG) {
+    if (text.includes(p)) return p;
+  }
+  const selfDirected = text.includes('我') || text.length <= 10;
+  if (selfDirected) {
+    for (const p of SELF_NEGATION_WEAK) {
+      if (text.includes(p)) return p;
+    }
+  }
+  return null;
+}
+
+/**
+ * 模块1·判断 child 域是否为家长口吻
+ */
+function isParentVoice(text: string): boolean {
+  return PARENT_VOICE_CLUES.some((k) => text.includes(k));
+}
+
+/**
+ * 模块1·“无所谓/不知道/被带来”的接住判定
+ * 弱信号“不知道”仅在整条消息很短时触发（如“不知道”），避免误伤“我不知道他为什么打人”
+ */
+function needsWarmCatch(text: string): boolean {
+  if (INDECISION_CLUES.some((k) => text.includes(k))) return true;
+  if (UNWILLING_CLUES.some((k) => text.includes(k))) return true;
+  if (text.includes('不知道') && text.length <= 8) return true;
+  return false;
+}
+
+/**
  * 统计历史中的用户消息数（历史里包含专家开场白，不能直接用 length）
  */
 function countUserMessages(history: ResponseContext['messageHistory']): number {
@@ -284,33 +375,116 @@ function extractSituation(text: string, domain: string): string | null {
 }
 
 /**
+ * 模块1·开场建约文案：保密边界 + 来访意愿 + 目标引导
+ * 仅 child/teen 域生效；child 域区分家长代述与孩子本人两种口吻
+ */
+function getOpeningContract(domain: string, parentVoice: boolean): string {
+  if (domain === 'teen') {
+    return '\n\n正式开始前，先和你约定两件事：① 我们聊的内容我不会原样告诉你的家人，除非你正处于伤害自己或他人的危险中——那是唯一的例外，因为安全最重要。② 今天是你自己想聊聊，还是被家人带来的？都可以，说实话就好。如果今天只聊一件事，你最想聊哪一件？';
+  }
+  if (domain === 'child') {
+    if (parentVoice) {
+      return '\n\n也请您放心：我们的聊天内容只保存在您自己的设备上，我不会原样转达给任何人，除非涉及安全风险。如果之后孩子愿意自己聊聊，我同样会尊重他的节奏。——那么，今天您最想先解决孩子的哪一件事？';
+    }
+    return '\n\n开始前先和你拉个勾：① 我们聊的内容我不会原样告诉爸爸妈妈，除非你正处于伤害自己或他人的危险中，因为安全最重要。② 今天是你自己想聊，还是爸爸妈妈让你来的？都可以告诉我。如果今天只聊一件事，你最想聊什么？';
+  }
+  return '';
+}
+
+/**
  * 生成共情阶段回复：优先使用具体情境模板，否则退回情绪关键词模板
+ * 模块1：child/teen 域首轮追加开场建约（保密边界/意愿探询/目标引导）
  */
 function generateEmpathyResponse(ctx: ResponseContext): string {
   const { expert, userMessage } = ctx;
   const emotion = extractEmotionKeyword(userMessage);
   const situation = extractSituation(userMessage, expert.domain);
 
+  let empathy: string;
   if (situation) {
     const templates = getSituationEmpathyTemplates(expert.domain);
-    return pick(templates)
+    empathy = pick(templates)
       .replace('{situation}', situation)
       .replace('{emotion}', emotion);
+  } else {
+    const templates = getEmpathyTemplates(expert.domain);
+    empathy = pick(templates)
+      .replace('{keyword}', emotion)
+      .replace('{content}', userMessage.slice(0, 50));
   }
 
-  const templates = getEmpathyTemplates(expert.domain);
-  return pick(templates)
-    .replace('{keyword}', emotion)
-    .replace('{content}', userMessage.slice(0, 50));
+  // 模块1：仅儿童/青少年域追加开场建约；child 域家长代述时用家长口吻，不强行用青少年口吻
+  if (expert.domain === 'child' || expert.domain === 'teen') {
+    const parentVoice = expert.domain === 'child' && isParentVoice(userMessage);
+    return empathy + getOpeningContract(expert.domain, parentVoice);
+  }
+  return empathy;
 }
 
 /**
- * 生成问题聚焦阶段回复：命中主题则针对性追问
+ * 模块1·接住话术：来访者说“无所谓/不知道聊什么/被带来的”时的温和回应
+ */
+function getCatchTemplates(domain: string): string[] {
+  const common = [
+    '没关系，不知道从哪里开始，本身就很正常。我们不急着找“正事”——随便聊聊最近的一天是怎么过的，也可以。',
+    '不知道聊什么都可以。那我们从最小的地方开始：最近有没有哪一个瞬间，让你稍微觉得轻松一点点？',
+    '被带过来的话，有点别扭、不太想说，都很正常。你可以只聊你愿意聊的部分，我们不急。我很好奇：你平时最喜欢做的一件事是什么？',
+  ];
+  if (domain === 'child') {
+    return [
+      ...common,
+      '没关系，不急着说出个所以然。我们就随便聊：今天学校里发生了什么好玩的事吗？哪怕是吃午饭时的小事也行。',
+    ];
+  }
+  return common;
+}
+
+/**
+ * 模块2·具体化追问父模板族
+ * 有时间/场景锚点 → 顺着线索追问细节；无锚点 → 落到“哪一天/什么时刻/在做什么”
+ * parentVoice 区分 child 域家长代述口吻
+ */
+function getSpecificityProbe(parentVoice: boolean, label: string, hasAnchor: boolean): string {
+  if (hasAnchor) {
+    const direct = [
+      '你刚才提到的那个时刻很关键。顺着它往下想：当时具体发生了什么？谁先做了什么，接下来呢？',
+      '在那个场景里，还有谁在场？他们做了什么反应？你当时心里闪过的第一个念头是什么？',
+      '那一刻之前的一小时，和平时有什么不一样吗？有时候线索就藏在前后的对比里。',
+    ];
+    const parent = [
+      '你刚才提到的那个时刻很关键。顺着它往下想：当时孩子具体在做什么？之前发生了什么，之后大人是怎么回应的？',
+      '那个场景里还有谁在场？他们的反应是什么？孩子之后的状态怎么样？',
+      '那一刻之前，和平时有什么不一样吗？比如当天的作息、刚经历过的事。线索常常藏在前后的对比里。',
+    ];
+    return pick(parentVoice ? parent : direct);
+  }
+  const direct = [
+    `能不能想到一个具体的例子？比如最近一次${label}是在哪一天、什么时间？当时你在做什么？`,
+    `我们先把它落到一个画面上：上一次${label}发生在什么时候？是在家里、学校，还是别的地方？`,
+    `如果只回忆最近的一次：那天是什么时间、什么场景？当时周围有谁？`,
+  ];
+  const parent = [
+    `能不能想到一个具体的例子？比如最近一次${label}是在哪一天、什么时刻？当时孩子在做什么，您在做什么？`,
+    `我们先把它落到一个画面上：上一次${label}发生在什么时候？在家里还是在外面？当时周围有谁？`,
+    `只回忆最近的一次就好：那天是什么时间、什么场景？孩子之前刚经历了什么？`,
+  ];
+  return pick(parentVoice ? parent : direct);
+}
+
+/**
+ * 生成问题聚焦阶段回复：
+ * - 模块1后续：child/teen 域“无所谓/不知道聊什么/被带来”且无明确主题 → 温和接住
+ * - 模块2：命中主题 → 具体化追问（有无时间/场景锚点双分支），取代泛化提问
  */
 function generateFocusResponse(ctx: ResponseContext): string {
   const { expert, userMessage } = ctx;
   const recentText = collectRecentUserText(ctx, 2);
   const topic = matchProblemTopic(recentText, expert.domain);
+
+  // 模块1后续：仅在儿童/青少年域、且没有明确问题可聊时，先接住再引导
+  if ((expert.domain === 'child' || expert.domain === 'teen') && !topic && needsWarmCatch(userMessage)) {
+    return pick(getCatchTemplates(expert.domain));
+  }
 
   if (topic) {
     const leadIns = [
@@ -318,7 +492,9 @@ function generateFocusResponse(ctx: ResponseContext): string {
       `我明白了，那我们先把注意力放在${topic.label}上。`,
       `好的，关于${topic.label}，我们一起来理一理。`,
     ];
-    return `${pick(leadIns)}${topic.focusProbe}`;
+    const parentVoice = expert.domain === 'child' && isParentVoice(recentText);
+    const hasAnchor = TIME_SCENE_CLUES.some((k) => recentText.includes(k));
+    return `${pick(leadIns)}${getSpecificityProbe(parentVoice, topic.label, hasAnchor)}`;
   }
 
   const templates = getFocusTemplates(expert.domain);
@@ -327,10 +503,36 @@ function generateFocusResponse(ctx: ResponseContext): string {
 }
 
 /**
+ * 模块4·例外→行动转化模板：用户已给出“还行/稍好”的例外线索时，
+ * 不再停留在“问”，而是把这个时刻放大为下一步起点。
+ * child 域补充“起点放大”引导：复现成功时刻 + 具体正反馈。
+ */
+function getExceptionConversionTemplates(domain: string): string[] {
+  const common = [
+    '你提到的这个“没那么糟”的时刻特别重要——它说明问题并不是时时刻刻都在。我们把它当成一个可以放大的起点：这周，能不能让这样的时刻再多出现一点点？哪怕只多一次，也是改变的开始。',
+    '这些还不错的时刻是怎么发生的？当时你做了什么、周围有什么不一样？找到那个“配方”，这周试着再用一次——让这样的时刻多出现一点点。从已经有效的部分出发，比从零开始容易得多。',
+  ];
+  if (domain === 'child') {
+    return [
+      ...common,
+      '孩子那个表现好的时刻，就是你们的起点。这周试着让它再多出现一次：同样的时间、同样的做法；当他做到时，给他具体的正反馈——“刚才你自己做到了，真棒”。好行为被看见，才会越来越多。',
+      '既然有“乖的时候”，说明孩子本来就具备那样的能力。这周只做一件事：盯住那个还不错的时刻，放大它——一个拥抱、一句具体的肯定。起点被放大，改变就会滚雪球。',
+    ];
+  }
+  return common;
+}
+
+/**
  * 生成例外资源探索阶段回复
+ * 模块4：用户已给出例外线索 → 直接转入“起点放大”转化；否则继续探索例外
  */
 function generateExceptionResponse(ctx: ResponseContext): string {
   const { expert } = ctx;
+  const recentText = collectRecentUserText(ctx, 2);
+  const hasClue = EXCEPTION_CLUES.some((k) => recentText.includes(k));
+  if (hasClue) {
+    return pick(getExceptionConversionTemplates(expert.domain));
+  }
   return pick(getExceptionTemplates(expert.domain));
 }
 
@@ -523,6 +725,38 @@ function getActionTemplates(domain: string): string[] {
 }
 
 /**
+ * 模块3·身份层/行为层分离模板
+ * 把“我这个人不行”（身份层结论）和“这一次事情没做好”（行为层）拆开。
+ * 边界：只做反映与提问，不做诊断、不承诺疗效。
+ */
+function getIdentitySeparationTemplates(domain: string): string[] {
+  const common = [
+    '我听到你说“{phrase}”。我想轻轻地和你区分一下：是“这一次事情没做好”，还是“我这个人不行”？没做好，是一件具体的事，可以想办法；而“我这个人不行”，是一个太重的结论——一件事的结果，不足以定义你这个人。愿意说说，刚刚发生的那件具体的事是什么吗？',
+    '你说“{phrase}”的时候，我注意到你把一次的结果，和“你这个人”划上了等号。我想陪你把它们分开：行为可以调整，事情可以重来，而你这个人的价值，不由任何一次结果决定。我们先只聊“这一次具体发生了什么”，好吗？',
+  ];
+  if (domain === 'teen') {
+    return [
+      ...common,
+      '“{phrase}”——这句话有点重，我想先轻轻放下它。一次考试、一次冲突，是事情层面的；而你这个人，远远大于任何一次结果。能和我具体说说，是哪件事让你这样看自己吗？',
+    ];
+  }
+  if (domain === 'child') {
+    return [
+      ...common,
+      '当你说“{phrase}”时，我想陪你区分一下：是“这次某件事没做好”，还是“你这个人不够好”？事情可以练习、可以再来，而你这个人的价值不是由一次结果决定的。能和我说说刚才发生了什么吗？',
+    ];
+  }
+  return common;
+}
+
+/**
+ * 模块3·身份层/行为层分离回应
+ */
+function generateIdentitySeparationResponse(ctx: ResponseContext, phrase: string): string {
+  return pick(getIdentitySeparationTemplates(ctx.expert.domain)).replace('{phrase}', phrase);
+}
+
+/**
  * 主响应生成函数
  */
 export function generateResponse(ctx: ResponseContext): string {
@@ -532,7 +766,13 @@ export function generateResponse(ctx: ResponseContext): string {
     return CRISIS_RESPONSE;
   }
 
-  // 2. 阶段判定：用户消息条数下限 + 最近消息内容信号
+  // 2. 模块3：检测到明确的自我否定语 → 身份层/行为层分离回应（优先于常规阶段推进）
+  const selfNegation = detectSelfDeprecation(ctx.userMessage);
+  if (selfNegation) {
+    return generateIdentitySeparationResponse(ctx, selfNegation);
+  }
+
+  // 3. 阶段判定：用户消息条数下限 + 最近消息内容信号
   const phase = getConversationPhase(ctx);
 
   switch (phase) {
