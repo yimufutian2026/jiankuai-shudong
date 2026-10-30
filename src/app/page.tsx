@@ -86,7 +86,7 @@ export default function HomePage() {
               <span>这里只有你知道，可以放心说</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground leading-snug mb-4">
-              在自己的房间，
+              在自己家，
               <br />
               也能好好照顾自己
             </h1>
@@ -112,7 +112,7 @@ export default function HomePage() {
           <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-border/60 shadow-lg animate-fade-in">
             <Image
               src="/hero-home.jpg"
-              alt="温馨居家自我疗愈场景：一个人在自己的房间里安心独处"
+              alt="温馨居家自我疗愈场景：一个人在自己家里安心独处"
               fill
               priority
               sizes="(max-width: 768px) 100vw, 50vw"
