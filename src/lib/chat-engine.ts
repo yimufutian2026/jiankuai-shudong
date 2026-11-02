@@ -15,6 +15,12 @@
  * 模块3 身份层/行为层分离：命中明确自我否定语时，把“我这个人不行”与“这一次没做好”拆开
  * 模块4 例外→行动转化：用户给出例外线索后，紧接着把“还行的时刻”放大为下一步起点
  *
+ * 简快身心积极疗法专业骨架（通用方法论，模板均为自编）：
+ * 模块5 三大限制性信念识别：「应该如此 / 托付心态 / 没有办法」命中时给出破框回应（含误判防护）
+ * 模块6 前提假设换框词库：12 条积极前提自编释义，融入小目标阶段，帮来访者松动旧视角
+ * 模块7 理解层次探问：focus 阶段已有具体线索时，顺着“环境→行为→能力→信念→身份”向下探一层
+ * 模块8 五大自助技法引导：逐步抽离 / 一分为二 / 感知位置平衡 / 接受自己 / 借力，按域匹配、分步引导
+ *
  * 安全边界：危机识别（crisis.ts）为最高优先级，免责声明话术保持原样，纯本地规则引擎。
  */
 
@@ -265,6 +271,237 @@ function detectSelfDeprecation(text: string): string | null {
 }
 
 /**
+ * 模块5·三大限制性信念（思维陷阱）
+ * shouldBe  应该如此——用一把"应该"的尺子量别人，疼的常是拿尺子的自己
+ * entrust   托付心态——把开心的钥匙交到别人手里，只能等对方开门
+ * noWay     没有办法——不是真的没有路，多是旧的路走了太多遍
+ * 关键词均为日常口语，模板全部自编；回应结尾均落到"拿回主动权"的探问上
+ */
+interface LimitingBelief {
+  id: 'shouldBe' | 'entrust' | 'noWay';
+  keywords: string[];
+  reframes: string[];
+  /** 分域深化：特定域的差异化破框（如 child 域家长教养语境） */
+  domainReframes?: Record<string, string[]>;
+}
+
+const LIMITING_BELIEFS: LimitingBelief[] = [
+  {
+    id: 'shouldBe',
+    keywords: [
+      '他应该', '她就该', '他就该', '她就该', '就应该', '本该', '本来就应该',
+      '凭什么', '理所当然', '理应如此', '必须得听', '非要他改', '他应该懂',
+    ],
+    reframes: [
+      '你心里那句"他就应该怎样"，像一根一直绷紧的弦——弦的这头是他的做法，那头拽着的却是你的心。我们试着把"他应该"换成"我希望"：你希望的是什么？在这个希望暂时实现不了的时候，你能先为自己做点什么？把"他应该"放下一点点，主动权就回到你手里一点点。',
+      '"应该"是一把尺子，量别人的时候，疼的往往是拿尺子的自己。先量量看：这个"应该"背后，你真正在意的是什么？是被尊重、被看见，还是一份安心？找到它，我们就有了别的路可以走——不一定非要等他变成"应该的样子"。',
+    ],
+    domainReframes: {
+      child: [
+        '您心里那句"孩子就应该听话"，像一根一直绷紧的弦——弦的这头是孩子的表现，那头拽着的是您的心。试着把"他应该"换成"我希望"：您希望孩子做到什么？在他暂时做不到的时候，我们能陪他练的第一步是什么？把尺子先放下，办法才进得来。',
+        '"孩子就应该乖、应该自觉"——这把尺子量孩子的时候，累的常常是拿尺子的您。先看看尺子背后您真正在意的是什么：是他的安全、他的习惯，还是您怕他走弯路？找到它，我们就有别的路可以走。',
+      ],
+    },
+  },
+  {
+    id: 'entrust',
+    keywords: [
+      '都怪他', '都怪她', '都是他害', '都是她害', '要不是他', '要不是她',
+      '他害的', '只有他改变', '只有她改变', '等他改变', '等她改变', '他不改',
+      '她不改', '他先道歉', '她先道歉', '他欠我', '她欠我', '他毁了我',
+    ],
+    reframes: [
+      '把开心的钥匙交到别人手里，就只能等对方开门——这种等待最耗人。钥匙其实可以拿回来：就算他暂时不改变，你依然可以为自己做的一件小事是什么？先拿回一把钥匙，被困住的感觉就会少一分。',
+      '怪他很容易，而且你可能真的没怪错。但"他错"和"你好起来"是两件事——他的改变我们决定不了，你的状态可以从今天开始照顾。这周，有没有一件不为任何人、只为你自己做的小事？',
+    ],
+    domainReframes: {
+      child: [
+        '"只有孩子改了，我才能不焦虑"——这等于把开心的钥匙交到了孩子手里，他只能让您更着急。先拿回一把钥匙：这周有没有一件不围着孩子转、只为您自己做的小事？您的状态松一分，家里的空气就松一分。',
+      ],
+    },
+  },
+  {
+    id: 'noWay',
+    keywords: [
+      '没办法', '没别的办法', '没有别的办法', '只能这样', '只能认命',
+      '别无选择', '没法改变', '改变不了现状', '没有出路',
+    ],
+    reframes: [
+      '"没办法"常常不是真的没有路，而是旧的那条路走了太多遍——重复旧的做法，只会得到旧的结果。我们先不找"最好的办法"：关于这件事，哪怕看起来不太靠谱，你还能想到第二个、第三个做法吗？办法一多，选择就回来了。',
+      '"没办法"出现的时候，可以换个问法：不问"为什么没办法"，改问"如果有一个办法，它可能长什么样"？哪怕只是个模糊的轮廓，我们也能顺着它往下找。你愿意试着描述一下那个轮廓吗？',
+    ],
+    domainReframes: {
+      child: [
+        '"没办法"往往是因为同一招用了太多遍——重复旧的做法，只会得到旧的结果。关于孩子的这个情况，咱们先不找"最好的办法"：除了现在常用的方法，您还能想到第二个、第三个做法吗？哪怕看起来不太靠谱，办法一多，选择就回来了。',
+      ],
+    },
+  },
+];
+
+/**
+ * 模块5·检测限制性信念；返回命中的陷阱定义
+ * 误判防护：
+ * - 「没有办法」类采用位置守卫：关键词前 2 字内出现"他/她"（如"他没办法来接我""拿她没办法"）
+ *   是在陈述他人的情况，不视为自我卡壳，不触发
+ * - 首轮用户消息不触发（保留共情与建约空间），由调用处按消息条数控制
+ */
+function detectLimitingBelief(text: string): LimitingBelief | null {
+  for (const belief of LIMITING_BELIEFS) {
+    for (const k of belief.keywords) {
+      const idx = text.indexOf(k);
+      if (idx === -1) continue;
+      if (belief.id === 'noWay') {
+        const preceding = text.slice(Math.max(0, idx - 2), idx);
+        if (preceding.includes('他') || preceding.includes('她')) continue;
+      }
+      return belief;
+    }
+  }
+  return null;
+}
+
+/** 模块5·破框回应：通用池 + 当前域差异化模板合并抽取 */
+function generateBeliefReframeResponse(belief: LimitingBelief, domain: string): string {
+  const pool = [...belief.reframes, ...(belief.domainReframes?.[domain] ?? [])];
+  return pick(pool);
+}
+
+/**
+ * 模块6·简快前提假设换框词库（自编释义）
+ * 每条 = 一句前提 + 一句落地提醒；在小目标阶段随机融入一条，帮来访者松动旧视角
+ */
+const PRESUPPOSITION_LINES: string[] = [
+  '没有两个人是一模一样的——你们的不同不是问题本身，而是相处的起点。',
+  '一个人改变不了另一个人，但可以营造一个让对方愿意改变的环境。',
+  '有效果比有道理更重要——争赢了道理，别输了关系。',
+  '重复旧的做法，只会得到旧的结果——哪怕只换一个动作，也可能不一样。',
+  '凡事必有至少三个解决办法——一个办法太少，两个办法两难，三个以上才有选择。',
+  '你本来就具备让自己好起来的资源——它们只是暂时没被看见，不是不存在。',
+  '情绪没有对错，它只是在提醒你：有些需要还没被照顾到。',
+  '动机本身总不会错，只是行为有时达不到效果——把"想做好"和"没做好"分开看。',
+  '沟通的意义在于对方的回应——没传达到，就换一种说法，而不是更大的音量。',
+  '旧地图到不了新地方——过去有效的做法，未必适合现在的处境。',
+  '每个让你苦恼的行为背后，都可能藏着一个想被满足的正面需要。',
+  '感觉路不通的时候，往往不是路的问题，而是可以换一条走法。',
+];
+
+/** 模块6·取一条前提假设换框句 */
+function getPresuppositionLine(): string {
+  return pick(PRESUPPOSITION_LINES);
+}
+
+/**
+ * 模块8·五大自助技法引导脚本（通用方法，脚本内容全部自编）
+ * 每条 = 识别信号 + 生效域 + 分步引导脚本；均以来访者自己可在家完成为前提
+ * 抽离法附安全提示：太强烈就停下回到当下；所有技法不替代专业咨询
+ */
+interface TechniqueGuide {
+  id: 'distancing' | 'splitting' | 'positions' | 'selfAccept' | 'borrowing';
+  name: string;
+  keywords: string[];
+  domains: string[];
+  script: string;
+  /** 需自我指向（含"我"）才触发，防止误伤描述他人的句子 */
+  selfDirected?: boolean;
+  /** 含这些片段时不触发（如"对孩子没信心"非自我挑战场景） */
+  excludeKeywords?: string[];
+}
+
+const TECHNIQUE_GUIDES: TechniqueGuide[] = [
+  {
+    id: 'distancing',
+    name: '逐步抽离法',
+    keywords: ['总是想起', '忘不掉', '忘不了', '一闭眼就', '反复想起', '反复出现', '阴影', '做噩梦'],
+    domains: ['child', 'teen', 'marriage', 'family', 'general'],
+    script:
+      '这段回忆对你影响很大，我们用一个温和的方法，和它拉开一点距离：\n\n' +
+      '第一步：坐稳，双脚踩实地面，做三次缓慢的深呼吸，先让自己安定下来。\n' +
+      '第二步：想象那件事像一段视频，在远处一个小小的屏幕上播放，而你是坐在安全距离外的观众。\n' +
+      '第三步：在心里把画面调小一点、调暗一点、调慢一点，直到它对你的冲击变弱。\n' +
+      '第四步：看着画面里那个经历事情的自己，轻轻说一句：那时候的你，已经尽力了。\n\n' +
+      '如果哪一步感觉太强烈，就停下来、睁开眼回到当下——节奏完全由你掌控。做完之后，现在的感觉比刚刚好一点了吗？',
+  },
+  {
+    id: 'splitting',
+    name: '一分为二法',
+    keywords: ['恨他', '恨她', '恨死他', '恨死她', '无法原谅', '不能原谅', '咽不下这口气'],
+    domains: ['teen', 'marriage', 'family', 'general'],
+    script:
+      '对一个人的怨恨背久了很重，试试把人和事分开：\n\n' +
+      '第一步：想象把这个人分成两个——"作为整个人的他"，和"做出那件事的他"。\n' +
+      '第二步：看着"整个人的他"，在心里说：你也许无法喜欢这个人，但你愿意把人和事分开来看。\n' +
+      '第三步：把让你受伤的那个行为，放回"那一件事"里——你抗拒的是那件事，不必让整个人的重量都压在你身上。\n' +
+      '第四步：问自己：分开之后，心里有没有松一点点？\n\n' +
+      '一分为二不是要你原谅他，而是把你自己从怨恨的重担里解放出来。这和你的感受接近吗？',
+  },
+  {
+    id: 'positions',
+    name: '感知位置平衡法',
+    keywords: ['不理解我', '无法沟通', '说不通', '讲不通', '冷战', '天天吵架', '总是吵架', '一说话就吵'],
+    domains: ['teen', 'marriage', 'family'],
+    script:
+      '卡在"他根本不理解我"的时候，可以试试换几个位置看一看：\n\n' +
+      '第一位置：先站稳自己这边，把感受和需要说清楚——"我感到……，我需要……"。\n' +
+      '第二位置：想象坐到他的椅子上，用他的眼睛看这件事——他可能在担心什么、在意什么？哪怕只是猜测。\n' +
+      '第三位置：再退到旁观者的位置，看着这两个人——如果是朋友遇到这一幕，你会给他们什么建议？\n' +
+      '最后回到第一位置：带着刚才看到的，重新想想下一次怎么开口。\n\n' +
+      '换位置不是要你认同他，而是让你手里多几张牌。刚才换位置的时候，有没有看到一点之前没看到的？',
+  },
+  {
+    id: 'selfAccept',
+    name: '接受自己法',
+    keywords: ['讨厌自己', '讨厌这样的自己', '讨厌现在这个', '不喜欢自己', '看不起自己', '接受不了自己', '恨自己', '嫌弃自己'],
+    domains: ['child', 'teen', 'marriage', 'family', 'general'],
+    script:
+      '对自己苛刻久了会很累，试着和"自己"重新做朋友：\n\n' +
+      '第一步：想象对面站着另一个你——那个一直在努力撑着、却常被批评的你。\n' +
+      '第二步：看着TA，先承认TA这些年的不容易：TA一直在尽力，只是有些做法没达到想要的效果。\n' +
+      '第三步：在心里对TA说："我看见你了，我愿意接受你，包括你的不完美。"\n' +
+      '第四步：想象自己向TA走近一步，直到你们站在一起。\n\n' +
+      '接受自己不是放弃变好，而是不再把力气花在和自己打仗上。说完那句话的时候，身体里有什么感觉？',
+  },
+  {
+    id: 'borrowing',
+    name: '借力法',
+    keywords: ['没信心', '没有信心', '怕自己不行', '害怕失败', '没底气', '不敢上台', '心里没底'],
+    domains: ['teen', 'marriage', 'family', 'general'],
+    selfDirected: true,
+    // “我对孩子没信心”是对他人没把握，非自我挑战场景，不借
+    excludeKeywords: ['对孩子', '对他没', '对她没'],
+    script:
+      '面对没把握的场合，可以先向"榜样"借一点力量：\n\n' +
+      '第一步：想一个你佩服的人——身边的、书中的、影视里的都可以，想象TA就站在你面前。\n' +
+      '第二步：想象TA身上你最需要的那份力量（镇定、勇气、表达力），化作一团温暖的光。\n' +
+      '第三步：缓慢深呼吸，想象这团光随吸气进入身体，流到肩膀、胸口、手心。\n' +
+      '第四步：带着这份借来的力量，在心里预演一遍那个场合——留意自己的站姿和呼吸，有没有稳一点？\n\n' +
+      '借力只是引子，点着的是你本来就有的部分。预演完，心里有几成把握了？',
+  },
+];
+
+/**
+ * 模块8·匹配当前消息适合的自助技法
+ * selfDirected 的技法要求消息含"我"，避免"他害怕失败"这类描述误触发
+ */
+function matchTechnique(text: string, domain: string): TechniqueGuide | null {
+  for (const guide of TECHNIQUE_GUIDES) {
+    if (!guide.domains.includes(domain)) continue;
+    if (guide.selfDirected && !text.includes('我')) continue;
+    if (guide.excludeKeywords?.some((k) => text.includes(k))) continue;
+    if (guide.keywords.some((k) => text.includes(k))) return guide;
+  }
+  return null;
+}
+
+/** 模块8·生成技法引导回应 */
+function generateTechniqueResponse(guide: TechniqueGuide): string {
+  const leadIns = [
+    `你描述的状态，让我想到一个可以现在就试试的方法——${guide.name}。`,
+    `针对你现在的困扰，有一个在家就能做的练习：${guide.name}。`,
+  ];
+  return `${pick(leadIns)}\n\n${guide.script}`;
+}
+
+/**
  * 模块1·判断 child 域是否为家长口吻
  */
 function isParentVoice(text: string): boolean {
@@ -472,9 +709,29 @@ function getSpecificityProbe(parentVoice: boolean, label: string, hasAnchor: boo
 }
 
 /**
+ * 模块7·理解层次探问：已有具体线索（时间/场景锚点）时，顺着细节
+ * 再向下探一层——从“环境/行为”落到“能力/信念/身份”，帮来访者看到深层模式
+ * parentVoice 区分 child 域家长代述口吻
+ */
+function getLevelsProbe(parentVoice: boolean): string {
+  const direct = [
+    '再往下探一层：那一刻，你心里对自己说了句什么？那句话，你信了它多久了？',
+    '顺着这个场景再深一点：当时你觉得自己"能做到吗"？这个判断是从什么时候开始跟着你的？',
+    '如果给那一刻的自己贴一个标签，你会贴什么？——我们先一起看看这个标签，不急着认下它。',
+  ];
+  const parent = [
+    '再往下探一层：那一刻，您心里对孩子闪过的判断是什么？比如"他就是不听话"？这个判断从什么时候开始的？',
+    '顺着这个场景再深一点：当时您心里有没有一个声音，比如"我不是个好家长"？我们把这个声音先放在桌上，一起看看它。',
+    '那一刻除了着急，您对自己说了什么？那句话跟着您多久了？',
+  ];
+  return pick(parentVoice ? parent : direct);
+}
+
+/**
  * 生成问题聚焦阶段回复：
  * - 模块1后续：child/teen 域“无所谓/不知道聊什么/被带来”且无明确主题 → 温和接住
  * - 模块2：命中主题 → 具体化追问（有无时间/场景锚点双分支），取代泛化提问
+ * - 模块7：有锚点时追加理解层次探问，从场景细节落到信念/身份层
  */
 function generateFocusResponse(ctx: ResponseContext): string {
   const { expert, userMessage } = ctx;
@@ -494,7 +751,11 @@ function generateFocusResponse(ctx: ResponseContext): string {
     ];
     const parentVoice = expert.domain === 'child' && isParentVoice(recentText);
     const hasAnchor = TIME_SCENE_CLUES.some((k) => recentText.includes(k));
-    return `${pick(leadIns)}${getSpecificityProbe(parentVoice, topic.label, hasAnchor)}`;
+    const specificity = getSpecificityProbe(parentVoice, topic.label, hasAnchor);
+    if (hasAnchor) {
+      return `${pick(leadIns)}${specificity}\n\n${getLevelsProbe(parentVoice)}`;
+    }
+    return `${pick(leadIns)}${specificity}`;
   }
 
   const templates = getFocusTemplates(expert.domain);
@@ -538,10 +799,11 @@ function generateExceptionResponse(ctx: ResponseContext): string {
 
 /**
  * 生成小目标设定阶段回复
+ * 模块6：前置一条简快前提假设换框句，帮来访者松动旧视角后再定小目标
  */
 function generateGoalResponse(ctx: ResponseContext): string {
   const { expert } = ctx;
-  return pick(getGoalTemplates(expert.domain));
+  return `${getPresuppositionLine()}\n\n${pick(getGoalTemplates(expert.domain))}`;
 }
 
 /**
@@ -772,7 +1034,21 @@ export function generateResponse(ctx: ResponseContext): string {
     return generateIdentitySeparationResponse(ctx, selfNegation);
   }
 
-  // 3. 阶段判定：用户消息条数下限 + 最近消息内容信号
+  // 3. 模块5：限制性信念（三大陷阱）破框——第 2 条用户消息起生效，首轮保留共情建约
+  if (countUserMessages(ctx.messageHistory) >= 2) {
+    const belief = detectLimitingBelief(ctx.userMessage);
+    if (belief) {
+      return generateBeliefReframeResponse(belief, ctx.expert.domain);
+    }
+
+    // 4. 模块8：命中自助技法信号 → 直接给出分步引导脚本（按域匹配）
+    const guide = matchTechnique(ctx.userMessage, ctx.expert.domain);
+    if (guide) {
+      return generateTechniqueResponse(guide);
+    }
+  }
+
+  // 5. 阶段判定：用户消息条数下限 + 最近消息内容信号
   const phase = getConversationPhase(ctx);
 
   switch (phase) {

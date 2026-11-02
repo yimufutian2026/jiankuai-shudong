@@ -19,6 +19,8 @@ type Msg = { role: 'user' | 'assistant'; content: string };
 const child = experts.find((e) => e.id === 'child')!;
 const teen = experts.find((e) => e.id === 'teen')!;
 const marriage = experts.find((e) => e.id === 'marriage')!;
+const family = experts.find((e) => e.id === 'family')!;
+const general = experts.find((e) => e.id === 'general')!;
 
 /** 构造与聊天页一致的历史：开场白 + 交替消息，最后一条为当前用户消息 */
 function buildHistory(userTexts: string[]): Msg[] {
@@ -350,6 +352,129 @@ check(
   personality !== undefined &&
     personality.questions.every((q) => q.isCrisis !== true) &&
     personality.results.length === 0,
+  ''
+);
+
+// ---------- L 组：模块5/6·限制性信念破框与前提假设 ----------
+console.log('\n【L组】限制性信念破框与前提假设');
+const l1 = generateResponse({
+  expert: marriage,
+  messageHistory: buildHistory(['我们最近关系很僵', '我老公就应该懂我，可他什么都不说']),
+  userMessage: '我老公就应该懂我，可他什么都不说',
+});
+check('L1 “应该如此”→破框回应', /尺子|我希望|主动权|在意的是/.test(l1) && l1 !== CRISIS_RESPONSE, l1);
+const l2 = generateResponse({
+  expert: family,
+  messageHistory: buildHistory(['家里关系很紧张', '都是他妈害的，只有她改变我们家才能好']),
+  userMessage: '都是他妈害的，只有她改变我们家才能好',
+});
+check('L2 “托付心态”→拿回主动权', /钥匙|拿回|两件事|你自己做|为自己/.test(l2), l2);
+const l3 = generateResponse({
+  expert: teen,
+  messageHistory: buildHistory(['学习压力大', '我没办法了，只能这样忍着']),
+  userMessage: '我没办法了，只能这样忍着',
+});
+check('L3 “没有办法”→三个办法破框', /旧的做法|第二个、第三个|办法一多|如果有一个办法/.test(l3), l3);
+const l4 = generateResponse({
+  expert: marriage,
+  messageHistory: buildHistory(['心情不好', '他没办法来接我，我很失望']),
+  userMessage: '他没办法来接我，我很失望',
+});
+check('L4 误判防护:“他没办法”(陈述事实)不触发破框', !/旧的做法|办法一多|如果有一个办法/.test(l4), l4);
+const l5 = generateResponse({
+  expert: general,
+  messageHistory: buildHistory(['心里烦', '最近心情不好，做什么都没劲']),
+  userMessage: '最近心情不好，做什么都没劲',
+});
+check('L5 误判防护:普通情绪不触发破框', !/尺子|钥匙|旧的做法|第二个、第三个/.test(l5), l5);
+const l6Texts: string[] = [];
+for (let i = 0; i < 40; i++) {
+  l6Texts.push(generateResponse({
+    expert: child,
+    messageHistory: buildHistory(['我家孩子不听话', '我没办法了，打也打了骂也骂了']),
+    userMessage: '我没办法了，打也打了骂也骂了',
+  }));
+}
+check('L6 均命中“没有办法”破框(40次)', l6Texts.every((t) => /旧的做法|第二个、第三个|如果有一个办法|办法一多/.test(t)), l6Texts[0]);
+check('L6b child域含家长版破框变体(40次覆盖)', l6Texts.some((t) => t.includes('同一招') || t.includes('孩子')), l6Texts[0]);
+const l7 = generateResponse({
+  expert: marriage,
+  messageHistory: buildHistory(['他应该懂我']),
+  userMessage: '他应该懂我',
+});
+check('L7 首轮不触发破框(保留共情)', !/尺子|主动权|钥匙/.test(l7), l7);
+const l8 = generateResponse({
+  expert: teen,
+  messageHistory: buildHistory(['压力大', '嗯', '好的', '那我接下来做点什么']),
+  userMessage: '那我接下来做点什么',
+});
+check('L8 目标阶段前置前提假设换框句', /两个人|改变不了另一个人|有效果比有道理|旧的做法|三个解决办法|资源|情绪没有对错|动机|沟通的意义|旧地图|正面的需要|换一条走法/.test(l8), l8);
+check(
+  'L9 破框/前提模板不做诊断不承诺疗效',
+  [l1, l2, l3, l8, ...l6Texts].every((t) => !/诊断|确诊|治疗疾病|保证治愈|包治/.test(t)),
+  ''
+);
+
+// ---------- M 组：模块7/8·理解层次与五大技法 ----------
+console.log('\n【M组】理解层次与五大技法');
+const m1 = generateResponse({
+  expert: teen,
+  messageHistory: buildHistory(['我有点烦', '上周三考试前我慌得不行']),
+  userMessage: '上周三考试前我慌得不行',
+});
+check('M1 有锚点focus→追加理解层次探问', /标签|信了它多久|从什么时候开始|对自己说了句什么|能做到/.test(m1), m1);
+const m2 = generateResponse({
+  expert: general,
+  messageHistory: buildHistory(['心里有事', '那件忘不掉的事总是反复想起，晚上睡不好']),
+  userMessage: '那件忘不掉的事总是反复想起，晚上睡不好',
+});
+check('M2 反复想起→逐步抽离法', m2.includes('逐步抽离') && /第一步|第二步/.test(m2), m2);
+check('M2b 抽离法含安全提示(太强烈就停下)', /停下来|回到当下|掌控/.test(m2), m2);
+const m3 = generateResponse({
+  expert: marriage,
+  messageHistory: buildHistory(['心里有气', '我咽不下这口气，无法原谅他']),
+  userMessage: '我咽不下这口气，无法原谅他',
+});
+check('M3 怨恨→一分为二法', m3.includes('一分为二') && /第一步|第二步/.test(m3), m3);
+const m4 = generateResponse({
+  expert: marriage,
+  messageHistory: buildHistory(['关系紧张', '我们一说话就吵，他根本不理解我']),
+  userMessage: '我们一说话就吵，他根本不理解我',
+});
+check('M4 沟通僵局→感知位置平衡法', m4.includes('感知位置') && /第一位置|第二位置|第三位置/.test(m4), m4);
+const m5 = generateResponse({
+  expert: teen,
+  messageHistory: buildHistory(['心情不好', '我讨厌这样的自己']),
+  userMessage: '我讨厌这样的自己',
+});
+check('M5 自我厌恶→接受自己法', m5.includes('接受自己') && /第一步|第二步/.test(m5), m5);
+const m6 = generateResponse({
+  expert: teen,
+  messageHistory: buildHistory(['有点紧张', '下周要演讲比赛，我特别没信心，怕自己不行']),
+  userMessage: '下周要演讲比赛，我特别没信心，怕自己不行',
+});
+check('M6 信心不足→借力法', m6.includes('借力') && /第一步|第二步/.test(m6), m6);
+const m7 = generateResponse({
+  expert: child,
+  messageHistory: buildHistory(['孩子不听话', '我们一说话就吵']),
+  userMessage: '我们一说话就吵',
+});
+check('M7 域限制:child域不触发感知位置(仅teen/marriage/family)', !m7.includes('感知位置'), m7);
+const m8 = generateResponse({
+  expert: teen,
+  messageHistory: buildHistory(['聊聊', '他害怕失败，所以不敢报名']),
+  userMessage: '他害怕失败，所以不敢报名',
+});
+check('M8 误判防护:无“我”不触发借力法', !m8.includes('借力'), m8);
+const m9 = generateResponse({
+  expert: child,
+  messageHistory: buildHistory(['聊聊孩子', '我对孩子没信心，总觉得他做不好']),
+  userMessage: '我对孩子没信心，总觉得他做不好',
+});
+check('M9 误判防护:“对孩子没信心”不触发借力法', !m9.includes('借力'), m9);
+check(
+  'M10 技法脚本不做诊断不承诺疗效',
+  [m2, m3, m4, m5, m6].every((t) => !/诊断|确诊|治疗疾病|保证治愈|包治/.test(t)),
   ''
 );
 
